@@ -7,6 +7,9 @@ delete from blocked_tuples_table;
 delete from blocked_transactions_table;
 delete from avail_metric_table;
 delete from active_transactions_table;
+delete from temp_tuples_table_AIMS;
+delete from blocked_tuples_table_DTQR;
+delete from blocked_tuples_table_AIMS;
 
 /* Vacuuming the backup tables, delete every version of the table that is one hour old */
 

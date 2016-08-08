@@ -5,7 +5,6 @@ It puts all the tuples being modified between the commit time of the malicious t
 time stamp of detection in the blocked tuples table which is used by the transaction control before trigger 
 for transaction suspension if the read set of a transaction has the tuples in the blocked tuples table.
  
-
 */
 
 
@@ -50,11 +49,6 @@ Where operation <> 1 and time_stamp BETWEEN transaction_commit_time and transact
 
 	END LOOP;
 
-select count(*) into number_blocked_tuples
-from blocked_tuples_table;
-
-raise notice 'Blocked Tuples from Malicious Transaction: % are = %' , malicious_transaction_id, number_blocked_tuples;
-
 
 Return Null;
 END;
@@ -63,5 +57,5 @@ $blocked_tuples_trigger$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS blocked_tuples_trigger on blocked_transactions_table;
 
 CREATE TRIGGER blocked_tuples_trigger
-AFTER INSERT ON blocked_transactions_table
+AFTER INSERT ON malicious_transactions_table
     FOR EACH ROW EXECUTE PROCEDURE blocked_tuples_trigger();

@@ -5,7 +5,6 @@ It puts all the tuples being modified between the commit time of the malicious t
 time stamp of detection in the blocked tuples table which is used by the transaction control before trigger 
 for transaction suspension if the read set of a transaction has the tuples in the blocked tuples table.
  
-
 */
 
 
@@ -46,14 +45,9 @@ FROM log_table
 Where operation <> 1 and time_stamp BETWEEN transaction_commit_time and transaction_detection_time 
 	LOOP
 
-	insert into blocked_tuples_table values (rec.object_id, malicious_transaction_id);
+	insert into blocked_tuples_table values (rec.object_id, malicious_transaction_id, transaction_detection_time, NULL);
 
 	END LOOP;
-
-select count(*) into number_blocked_tuples
-from blocked_tuples_table;
-
-raise notice 'Blocked Tuples from Malicious Transaction: % are = %' , malicious_transaction_id, number_blocked_tuples;
 
 
 Return Null;

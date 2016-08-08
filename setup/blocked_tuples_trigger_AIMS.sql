@@ -44,7 +44,7 @@ FROM log_table
 Where operation <> 1 and time_stamp BETWEEN transaction_commit_time and transaction_detection_time 
 	LOOP
 
-	insert into blocked_tuples_table_DTQR values (rec.object_id);
+	insert into blocked_tuples_table_DTQR values (rec.object_id, malicious_transaction_id);
 
 	END LOOP;
 
@@ -58,7 +58,7 @@ FROM log_table
 Where operation <> 1 and transaction_id = malicious_transaction_id 
 	LOOP
 
-	insert into temp_tuples_table_AIMS values (rec.object_id, NULL);
+	insert into temp_tuples_table_AIMS values (rec.object_id, malicious_transaction_id);
 
 	END LOOP;
 
@@ -72,12 +72,17 @@ Where I1.object_id = R1.id;
 
 */
 
---Selecting the ibs the malicious transactions write set belonged to
+--Selecting the ibs the malicious transactions write set belongs to
 
-CREATE TEMP TABLE blocked_ibs AS
+FOR rec IN
 SELECT DISTINCT I1.ib
 FROM ibd I1, temp_tuples_table_AIMS T1
-where I1.object_id = T1.blocked_tuples;
+where I1.object_id = T1.blocked_tuples
+	LOOP
+	
+	insert into blocked_ibs values (rec.ib, malicious_transaction_id);
+
+	END LOOP;
 
 --Select all of the tuples belonging to blocked_ibs in the blocked_tuples_table_AIMS
 
@@ -85,10 +90,11 @@ FOR rec IN
 SELECT I1.object_id 
 FROM ibd I1 
 Where I1.ib IN (select ib
-						from blocked_ibs)  
+		from blocked_ibs
+		where malicious_transaction = malicious_transaction_id)  
 	LOOP
 
-	insert into blocked_tuples_table_AIMS values (rec.object_id, NULL);
+	insert into blocked_tuples_table_AIMS values (rec.object_id, malicious_transaction_id);
 
 	END LOOP;
 
@@ -97,8 +103,9 @@ Where I1.ib IN (select ib
 FOR rec IN
 SELECT blocked_tuples 
 FROM blocked_tuples_table_DTQR 
-Where blocked_tuples IN (select blocked_tuples
-										from blocked_tuples_table_AIMS)  
+Where malicious_transaction = malicious_transaction_id and blocked_tuples IN (select blocked_tuples
+										from blocked_tuples_table_AIMS
+										where malicious_transaction = malicious_transaction_id)  
 	LOOP
 
 	insert into blocked_tuples_table values (rec.blocked_tuples, malicious_transaction_id, transaction_detection_time, NULL);
@@ -107,26 +114,16 @@ Where blocked_tuples IN (select blocked_tuples
 
 --Delete temporary tables
 
-delete from temp_tuples_table_AIMS;
-delete from blocked_tuples_table_DTQR;
-delete from blocked_tuples_table_AIMS;
+--delete from temp_tuples_table_AIMS;
+--delete from blocked_tuples_table_DTQR;
+--delete from blocked_tuples_table_AIMS;
 --drop table ib_assignment_table;
-drop table blocked_ibs;
-
-
-
---- Counting number of blocked tuples
-
-select count(*) into number_blocked_tuples
-from blocked_tuples_table;
-
-raise notice 'Blocked Tuples from Malicious Transaction: % are = %' , malicious_transaction_id, number_blocked_tuples;
-
+--drop table blocked_ibs;
 
 Return Null;
 END;
 $blocked_tuples_trigger_AIMS$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS blocked_tuples_trigger_AIMS on blocked_transactions_table;
 CREATE TRIGGER blocked_tuples_trigger_AIMS
-AFTER INSERT ON blocked_transactions_table
+AFTER INSERT ON malicious_transactions_table
     FOR EACH ROW EXECUTE PROCEDURE blocked_tuples_trigger_AIMS();

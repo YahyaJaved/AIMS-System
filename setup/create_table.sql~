@@ -127,17 +127,17 @@ create table avail_metric_table
 --------------------------------------------------------------------
 drop table if exists blocked_tuples_table_DTQR;
 create table blocked_tuples_table_DTQR
-(blocked_tuples oid) without oids;
+(blocked_tuples oid, malicious_transaction xid) without oids;
 
 --------------------------------------------------------------------
 drop table if exists blocked_tuples_table_AIMS;
 create table blocked_tuples_table_AIMS
-(blocked_tuples oid, ib int) without oids;
+(blocked_tuples oid, malicious_transaction xid) without oids;
 
 --------------------------------------------------------------------
 drop table if exists temp_tuples_table_AIMS;
 create table temp_tuples_table_AIMS
-(blocked_tuples oid, ib int) without oids;
+(blocked_tuples oid, malicious_transaction xid) without oids;
 
 --------------------------------------------------------------------
 --drop table if exists blocked_ib_table;
@@ -149,7 +149,7 @@ drop table if exists active_transactions_table;
 create table active_transactions_table
 (transaction_id xid) without oids;
 
--------------- New blocked transactions table -----------------
+-------------- New blocked tuples table -----------------
 
 drop table if exists blocked_tuples_table;
 create table blocked_tuples_table
@@ -159,8 +159,20 @@ create table blocked_tuples_table
 
 
 drop table if exists blocked_tuples_status;
-create table blocked_tuples_table
-(blocked_tuples_count int, status_timestamp timestamp, malicious_transation xid);
+create table blocked_tuples_status
+(blocked_tuples_count int, status_timestamp timestamp, malicious_transation xid) without oids;
+
+
+----- Blocked ibs table, originally it was a temp table defined in blocked_tuples_trigger_AIMS ------
+
+drop table if exists blocked_ibs;
+create table blocked_ibs
+(ib int, malicious_transaction xid) without oids;
+
+---- 
+
+
+
 
 
 

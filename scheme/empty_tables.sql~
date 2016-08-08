@@ -8,7 +8,7 @@ delete from blocked_transactions_table;
 delete from avail_metric_table;
 delete from active_transactions_table;
 
--- Vacuuming the backup tables, delete every version of the table that is one hour old
+/* Vacuuming the backup tables, delete every version of the table that is one hour old */
 
 delete  
 from country_backup
