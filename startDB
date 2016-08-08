@@ -1,0 +1,13 @@
+Installing Postgresql from Source:-
+
+sudo apt-get install zlib1g-dev libreadline6-dev gcc make
+sudo apt-get install bison
+sudo apt-get install flex
+
+Then exactly follow the instructions given in
+
+http://www.thegeekstuff.com/2009/04/linux-postgresql-install-and-configure-from-source/
+
+After making changes to source code configure, make and make install then restart server using the following command:-
+
+/usr/local/pgsql/bin/pg_ctl restart -D /usr/local/pgsql/data/

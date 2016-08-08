@@ -1,0 +1,6 @@
+command to run an sql file
+
+psql -d myDataBase -a -f myInsertFile
+
+bin/psql -d postgres -a -f /shared/AIMS/setup/rt_trg.sql
+

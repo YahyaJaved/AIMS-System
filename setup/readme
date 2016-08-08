@@ -1,0 +1,23 @@
+--> When Postgres is fully installed and set run the following command to install AIMS on Postgres
+
+		/usr/local/pgsql/bin/psql -d postgres -a -f /shared/aims/setup/setup.sql
+
+--> The initial setup will install DTQR
+
+--> If you want to install AIMS, run the following command
+
+		/usr/local/pgsql/bin/psql -d postgres -a -f /shared/aims/setup/AIMS.sql
+
+--> If you want to install DTQR again, run the following command
+
+		/usr/local/pgsql/bin/psql -d postgres -a -f /shared/aims/setup/DTQR.sql
+
+--> To clean up the triggers that fire up  with each transaction run the following command
+
+                /usr/local/pgsql/bin/psql -d postgres -a -f /shared/aims/setup/clean.sql
+
+--> To reinstall every trigger, run the setup script again using the following command
+
+                /usr/local/pgsql/bin/psql -d postgres -a -f /shared/aims/setup/setup.sql
+
+

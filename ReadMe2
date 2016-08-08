@@ -1,0 +1,41 @@
+
+--> At home directory of dmsl, in ~/AIMS/Postgres-AIMS/src/backend/executor/execMain.c
+commment out the following lines (already did that) and save the file
+
+      1553 - 1583
+      1607 - 1640
+      1679 - 1686
+
+--> Similarly at ~/AIMS/Postgres-AIMS/src/backend/executor/nodeModifyTable.c comment out the following
+lines (already did that) and save the file.
+
+      234 - 260
+      526 - 556
+      844 -870
+      1101 - 1129
+
+--> now while at Postgres-AIMS directory run the following commands
+
+    -  ./ configure
+    -  make
+    -  sudo make install
+
+--> now you can initiakize postgres data directory
+
+--> Once postgres is running fine, then create log_table (ddl is given in /shared/aims/setup/create_table.sql)
+
+--> Find out the OID of the log_table executing the following statement in psql
+
+    - select oid from pg_class where relname= 'log_table';
+
+--> Use this OID in line 1564 of ~/AIMS/Postgres-AIMS/src/backend/executor/execMain.c and lines 245 and 856 of
+~/AIMS/Postgres-AIMS/src/backend/executor/nodeModifyTable.c and uncomment what you have commented before in these files.
+
+--> Again run the following commands and you are good to go
+
+    -  ./ configure
+    -  make
+    -  sudo make install
+
+
+

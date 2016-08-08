@@ -1,0 +1,11 @@
+--> Before each experiment run, run the following command which cleans the intermediary tables
+
+		/usr/local/pgsql/bin/psql -d postgres -a -f /shared/aims/calculations/empty_tables.sql
+
+--> After each experiment run, run the following command to check different tables
+
+		/usr/local/pgsql/bin/psql -d postgres -a -f /shared/aims/calculations/print_tables.sql
+
+--> Run the following command to check the system availability for the experiment
+
+		/usr/local/pgsql/bin/psql -d postgres -a -f /shared/aims/calculations/avail.sql 		
