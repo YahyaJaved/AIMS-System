@@ -125,5 +125,5 @@ END;
 $blocked_tuples_trigger_AIMS$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS blocked_tuples_trigger_AIMS on blocked_transactions_table;
 CREATE TRIGGER blocked_tuples_trigger_AIMS
-AFTER INSERT ON blocked_transactions_table
+AFTER INSERT ON malicious_transactions_table
     FOR EACH ROW EXECUTE PROCEDURE blocked_tuples_trigger_AIMS();
