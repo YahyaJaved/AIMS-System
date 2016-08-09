@@ -168,3 +168,17 @@ drop table if exists blocked_ibs;
 create table blocked_ibs
 (ib int, malicious_transaction xid) without oids;
 
+-------------- benign transaction status table ---------
+
+drop table if exists benign_transaction_status;
+create table benign_transaction_table
+(transaction_id xid, suspension_time timestamp, resumption_time timestamp) without oids;
+
+
+
+
+
+
+
+
+

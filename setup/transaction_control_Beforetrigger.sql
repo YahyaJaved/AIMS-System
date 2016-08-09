@@ -16,7 +16,8 @@ Declare
 flag oid := NULL;
 rec record;
 t_current xid;
-ts_current timestamp := current_timestamp;
+ts_current1 timestamp;
+ts_current2 timestamp;
 	
 Begin
 
@@ -35,15 +36,16 @@ LIMIT 1;
 If NOT FOUND Then
 		raise notice 'Everything Fine';
 ELSE 
-		raise notice '--AIMS Response System Message--';
-		raise notice 'transaction: % has been suspended', t_current;
-
+/* Check transaction status suspension time */
+		ts_current1 := clock_timestamp();
+		
 /* Advisory Lock */
 		perform pg_advisory_xact_lock(1);
 
-		raise notice '--AIMS Response System Message--';
-		raise notice 'transaction: % has resumed execution', t_current;
-	
+/* Check transaction status resumption time */
+		ts_current2 := clock_timestamp();
+		insert into benign_transaction_status values (t_current, ts_current1, ts_current2);
+
 /* Read Select Tuples for this transaction here again as this transaction has read the corrupted tuples
 
 		FOR rec IN
