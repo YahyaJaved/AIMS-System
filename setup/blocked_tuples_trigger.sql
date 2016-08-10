@@ -57,5 +57,5 @@ $blocked_tuples_trigger$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS blocked_tuples_trigger on blocked_transactions_table;
 
 CREATE TRIGGER blocked_tuples_trigger
-AFTER INSERT ON malicious_transactions_table
+AFTER INSERT ON blocked_transactions_table
     FOR EACH ROW EXECUTE PROCEDURE blocked_tuples_trigger();
