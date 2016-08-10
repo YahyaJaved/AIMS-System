@@ -1,0 +1,15 @@
+delete from log_table;
+delete from dependency_table;
+delete from corrupted_transactions_table;
+delete from malicious_transactions_table;
+delete from repair_table;
+delete from blocked_tuples_table;
+delete from blocked_transactions_table;
+delete from avail_metric_table;
+delete from active_transactions_table;
+delete from account_backup;
+delete from branch_backup;
+delete from customer_backup;
+delete from saving_backup;
+delete from country_backup;
+delete from checking_backup;

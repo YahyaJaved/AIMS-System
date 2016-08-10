@@ -16,3 +16,8 @@ drop trigger transaction_control_Aftertrigger_customer on customer;
 drop trigger transaction_control_Aftertrigger_account on account;
 drop trigger transaction_control_Aftertrigger_checking on checking;
 drop trigger transaction_control_Aftertrigger_saving on saving;
+drop trigger blocked_tuples_trigger_AIMS on blocked_transactions_table;
+drop trigger blocked_tuples_trigger on blocked_transactions_table;
+drop trigger mal_trg on malicious_transactions_table;
+drop trigger recovery_trigger on repair_table;
+drop trigger rt_trigger on corrupted_transactions_table;
