@@ -91,13 +91,13 @@ read_object oid, write_object oid, time_stamp timestamp) without oids;
 
 drop table if exists blocked_transactions_table;
 create table blocked_transactions_table
-(transaction_id xid, detection_time_stamp timestamp) without oids;
+(transaction_id xid, detection_time_stamp timestamp,res_transaction_id xid) without oids;
 
 
 -------------------------------------------------------------
 drop table if exists malicious_transactions_table;
 create table malicious_transactions_table
-(transaction_id xid, detection_time_stamp timestamp) without oids;
+(transaction_id xid, detection_time_stamp timestamp,rec_transaction_id xid) without oids;
 
 --------------------------------------------------------------
 drop table if exists corrupted_transactions_table;
