@@ -31,7 +31,7 @@ the tuple is recovered */
 
 SELECT l1.object_id into flag
 FROM log_table l1, blocked_tuples_table b1 
-Where l1.object_id = b1.blocked_tuples and l1.transaction_id = t_current and b1.recovery_timestamp = NULL
+Where l1.object_id = b1.blocked_tuples and l1.transaction_id = t_current and b1.recovery_timestamp IS NULL
 LIMIT 1; 
 If NOT FOUND Then
 		raise notice 'Everything Fine';
