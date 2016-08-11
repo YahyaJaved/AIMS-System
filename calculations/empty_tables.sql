@@ -18,4 +18,4 @@ delete from blocked_tuples_table_dtqr;
 delete from blocked_tuples_table_aims;
 delete from blocked_ibs;
 delete from blocked_tuples_status;
-delete from benign_transaction_status;
+delete from benign_transaction_table;
