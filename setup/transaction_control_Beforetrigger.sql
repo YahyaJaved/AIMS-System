@@ -44,7 +44,18 @@ ELSE
 
 /* Check transaction status resumption time */
 		ts_current2 := clock_timestamp();
-		insert into benign_transaction_table values (t_current, ts_current1, ts_current2);
+		--insert into benign_transaction_table values (t_current, ts_current1, ts_current2);
+		select transaction_id into flag
+		from benign_transaction_table
+		where transaction_id = t_current
+		limit 1;
+		if not found then
+			insert into benign_transaction_table values (t_current, ts_current1, ts_current2);
+		else 
+			update benign_transaction_table set resumption_time = ts_current2
+			where transaction_id = t_current;
+		
+		end if;	
 
 /* Read Select Tuples for this transaction here again as this transaction has read the corrupted tuples
 
