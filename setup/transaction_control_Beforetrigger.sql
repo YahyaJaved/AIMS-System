@@ -44,7 +44,7 @@ ELSE
 
 /* Check transaction status resumption time */
 		ts_current2 := clock_timestamp();
-		insert into benign_transaction_status values (t_current, ts_current1, ts_current2);
+		insert into benign_transaction_table values (t_current, ts_current1, ts_current2);
 
 /* Read Select Tuples for this transaction here again as this transaction has read the corrupted tuples
 
@@ -61,7 +61,7 @@ ELSE
 			END LOOP;
 */
 END IF;
-
+--insert into benign_transaction_status values (t_current, ts_current1, ts_current2);
 Return Null;
 END;
 $transaction_control_Beforetrigger$ LANGUAGE plpgsql;
