@@ -81,9 +81,11 @@ Where operation = 1 and transaction_id = t_current
 
 	select xmin into t_xmin 
 	from COUNTRY
-	where oid = rec.object_id;
-
-	insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
+	where oid = rec.object_id
+	limit 1;
+	if found then
+		insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
+	end if;	
 
 	END LOOP;
 
@@ -122,7 +124,11 @@ Where operation = 1 and transaction_id = t_current
 
 	select xmin into t_xmin 
 	from BRANCH
-	where oid = rec.object_id;
+	where oid = rec.object_id
+		limit 1;
+	if found then
+		insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
+	end if;
 
 	insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
 
@@ -164,9 +170,12 @@ Where operation = 1 and transaction_id = t_current
 
 	select xmin into t_xmin 
 	from CUSTOMER
-	where oid = rec.object_id;
+	where oid = rec.object_id
+		limit 1;
+	if found then
+		insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
+	end if;
 
-	insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
 
 	END LOOP;
 
@@ -206,9 +215,12 @@ Where operation = 1 and transaction_id = t_current
 
 	select xmin into t_xmin 
 	from ACCOUNT
-	where oid = rec.object_id;
+	where oid = rec.object_id
+		limit 1;
+	if found then
+		insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
+	end if;
 
-	insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
 
 	END LOOP;
 
@@ -248,9 +260,12 @@ Where operation = 1 and transaction_id = t_current
 
 	select xmin into t_xmin 
 	from CHECKING
-	where oid = rec.object_id;
+	where oid = rec.object_id
+		limit 1;
+	if found then
+		insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
+	end if;
 
-	insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
 
 	END LOOP;
 
@@ -290,9 +305,12 @@ Where operation = 1 and transaction_id = t_current
 
 	select xmin into t_xmin 
 	from SAVING
-	where oid = rec.object_id;
+	where oid = rec.object_id
+		limit 1;
+	if found then
+		insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
+	end if;
 
-	insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
 
 	END LOOP;
 
