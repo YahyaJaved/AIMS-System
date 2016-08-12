@@ -1,3 +1,7 @@
+
+
+
+
 /*
 
 BACKUP AND DEPENDENCY TRIGGER
@@ -81,17 +85,17 @@ Where operation = 1 and transaction_id = t_current
 
 	select xmin into t_xmin 
 	from COUNTRY
-	where oid = rec.object_id
-	limit 1;
-	if found then
+	where oid = rec.object_id;
+	
+	IF t_xmin IS NOT NULL then
 		insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
-	end if;	
-
+	END IF;	
 	END LOOP;
 
 Return Null;
 END;
 $dependency_trigger_country$ LANGUAGE plpgsql;
+DROP TRIGGER IF EXISTS dependency_trigger_country on country;
 CREATE TRIGGER dependency_trigger_country
 AFTER INSERT OR UPDATE ON COUNTRY
     FOR EACH ROW EXECUTE PROCEDURE dependency_trigger_country();
@@ -124,20 +128,16 @@ Where operation = 1 and transaction_id = t_current
 
 	select xmin into t_xmin 
 	from BRANCH
-	where oid = rec.object_id
-		limit 1;
-	if found then
+	where oid = rec.object_id;
+	IF t_xmin IS NOT NULL then
 		insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
-	end if;
-
-	insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
-
+	END IF;	
 	END LOOP;
 
 Return Null;
 END;
 $dependency_trigger_branch$ LANGUAGE plpgsql;
-
+DROP TRIGGER IF EXISTS dependency_trigger_branch on branch;
 CREATE TRIGGER dependency_trigger_branch
 AFTER INSERT OR UPDATE ON BRANCH
     FOR EACH ROW EXECUTE PROCEDURE dependency_trigger_branch();
@@ -170,19 +170,16 @@ Where operation = 1 and transaction_id = t_current
 
 	select xmin into t_xmin 
 	from CUSTOMER
-	where oid = rec.object_id
-		limit 1;
-	if found then
+	where oid = rec.object_id;
+	IF t_xmin IS NOT NULL then
 		insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
-	end if;
-
-
+	END IF;	
 	END LOOP;
 
 Return Null;
 END;
 $dependency_trigger_customer$ LANGUAGE plpgsql;
-
+DROP TRIGGER IF EXISTS dependency_trigger_customer on customer;
 CREATE TRIGGER dependency_trigger_customer
 AFTER INSERT OR UPDATE ON CUSTOMER
     FOR EACH ROW EXECUTE PROCEDURE dependency_trigger_customer();
@@ -215,19 +212,17 @@ Where operation = 1 and transaction_id = t_current
 
 	select xmin into t_xmin 
 	from ACCOUNT
-	where oid = rec.object_id
-		limit 1;
-	if found then
+	where oid = rec.object_id;
+	IF t_xmin IS NOT NULL then	
 		insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
-	end if;
-
-
+	END IF;	
+	
 	END LOOP;
 
 Return Null;
 END;
 $dependency_trigger_account$ LANGUAGE plpgsql;
-
+DROP TRIGGER IF EXISTS dependency_trigger_account on account;
 CREATE TRIGGER dependency_trigger_account
 AFTER INSERT OR UPDATE ON ACCOUNT
     FOR EACH ROW EXECUTE PROCEDURE dependency_trigger_account();
@@ -260,19 +255,17 @@ Where operation = 1 and transaction_id = t_current
 
 	select xmin into t_xmin 
 	from CHECKING
-	where oid = rec.object_id
-		limit 1;
-	if found then
+	where oid = rec.object_id;
+	IF t_xmin IS NOT NULL then
 		insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
-	end if;
-
+	END IF;	
 
 	END LOOP;
 
 Return Null;
 END;
 $dependency_trigger_checking$ LANGUAGE plpgsql;
-
+DROP TRIGGER IF EXISTS dependency_trigger_checking on checking;
 CREATE TRIGGER dependency_trigger_checking
 AFTER INSERT OR UPDATE ON CHECKING
     FOR EACH ROW EXECUTE PROCEDURE dependency_trigger_checking();
@@ -305,26 +298,19 @@ Where operation = 1 and transaction_id = t_current
 
 	select xmin into t_xmin 
 	from SAVING
-	where oid = rec.object_id
-		limit 1;
-	if found then
+	where oid = rec.object_id;
+	IF t_xmin IS NOT NULL then
 		insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
-	end if;
-
+	END IF;	
 
 	END LOOP;
 
 Return Null;
 END;
 $dependency_trigger_saving$ LANGUAGE plpgsql;
-
+DROP TRIGGER IF EXISTS dependency_trigger_saving on saving;
 CREATE TRIGGER dependency_trigger_saving
 AFTER INSERT OR UPDATE ON SAVING
     FOR EACH ROW EXECUTE PROCEDURE dependency_trigger_saving();
-
-
-
-
-
 
 
