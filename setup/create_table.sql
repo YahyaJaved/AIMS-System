@@ -115,9 +115,9 @@ create table art_table
 (transaction_id xid, transaction_start_time timestamp, transaction_end_time timestamp) without oids;
 
 ------------------------------------------------------------------
-drop table if exists blocked_tuples_table;
-create table blocked_tuples_table
-(blocked_tuples oid, malicious_transaction xid) without oids;
+-- drop table if exists blocked_tuples_table;
+-- create table blocked_tuples_table
+-- (blocked_tuples oid, malicious_transaction xid) without oids;
 
 ------------------------------------------------------------------
 drop table if exists avail_metric_table;

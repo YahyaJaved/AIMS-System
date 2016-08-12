@@ -108,7 +108,7 @@ Where malicious_transaction = malicious_transaction_id and blocked_tuples IN (se
 										where malicious_transaction = malicious_transaction_id)  
 	LOOP
 
-	insert into blocked_tuples_table values (rec.blocked_tuples, malicious_transaction_id, transaction_detection_time, NULL);
+	insert into blocked_tuples_table values (rec.blocked_tuples, malicious_transaction_id, transaction_detection_time - interval '4 hours', NULL);
 
 	END LOOP;
 
