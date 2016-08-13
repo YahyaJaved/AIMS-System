@@ -125,7 +125,7 @@ from blocked_tuples_table
 where recovery_timestamp IS NULL;
 
 
-insert into blocked_tuples_status values (tuples_unrecovered, ts_current,  new.transaction_id);
+insert into blocked_tuples_status values (tuples_unrecovered, ts_current,  new.transaction_id,new.detection_time_stamp,ts_current);
 
 update blocked_tuples_table set recovery_timestamp = ts_current
 where malicious_transaction = new.transaction_id;
