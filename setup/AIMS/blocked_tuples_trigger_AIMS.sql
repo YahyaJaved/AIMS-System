@@ -87,28 +87,28 @@ where I1.object_id = T1.blocked_tuples
 --Select all of the tuples belonging to blocked_ibs in the blocked_tuples_table_AIMS
 
 FOR rec IN
-SELECT I1.object_id 
+SELECT I1.object_id, I1.ib 
 FROM ibd I1 
 Where I1.ib IN (select ib
 		from blocked_ibs
 		where malicious_transaction = malicious_transaction_id)  
 	LOOP
 
-	insert into blocked_tuples_table_AIMS values (rec.object_id, malicious_transaction_id);
+	insert into blocked_tuples_table_AIMS values (rec.object_id, malicious_transaction_id, rec.ib);
 
 	END LOOP;
 
 --Populate the original blocked_tuples_table by taking the intersection between blocked_tuples_table_DTQR and blocked_tuples_table_AIMS
 
 FOR rec IN
-SELECT blocked_tuples 
-FROM blocked_tuples_table_DTQR 
+SELECT blocked_tuples, ib 
+FROM blocked_tuples_table_AIMS 
 Where malicious_transaction = malicious_transaction_id and blocked_tuples IN (select blocked_tuples
-										from blocked_tuples_table_AIMS
+										from blocked_tuples_table_DTQR
 										where malicious_transaction = malicious_transaction_id)  
 	LOOP
 
-	insert into blocked_tuples_table values (rec.blocked_tuples, malicious_transaction_id, transaction_detection_time - interval '4 hours', NULL);
+	insert into blocked_tuples_table values (rec.blocked_tuples, malicious_transaction_id, transaction_detection_time, NULL, rec.ib);
 
 	END LOOP;
 

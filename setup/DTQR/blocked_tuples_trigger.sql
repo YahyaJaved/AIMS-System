@@ -45,7 +45,7 @@ FROM log_table
 Where operation <> 1 and time_stamp BETWEEN transaction_commit_time and transaction_detection_time 
 	LOOP
 
-	insert into blocked_tuples_table values (rec.object_id, malicious_transaction_id, transaction_detection_time - interval '4 hours', NULL);
+	insert into blocked_tuples_table values (rec.object_id, malicious_transaction_id, transaction_detection_time, NULL);
 
 	END LOOP;
 
