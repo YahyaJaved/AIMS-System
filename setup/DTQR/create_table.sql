@@ -11,55 +11,55 @@ object_id oid, operation int, tableid oid) without oids;
 --(mod_transaction xid, mod_time timestamp, tuple_id oid, name varchar(30)) without oids;
 
 ---------------------------------------------------------
-drop table if exists country_backup;
-CREATE TABLE country_backup
-(mod_transaction xid
-, mod_time timestamp
-, tuple_id oid
-, c_id integer NOT NULL
-, c_name   varchar(50) NOT NULL
-, c_dfreq smallint not null) without oids;
+-- drop table if exists country_backup;
+-- CREATE TABLE country_backup
+-- (mod_transaction xid
+-- , mod_time timestamp
+-- , tuple_id oid
+-- , c_id integer NOT NULL
+-- , c_name   varchar(50) NOT NULL
+-- , c_dfreq smallint not null) without oids;
 
 ---------------------------------------------------------
-drop table if exists branch_backup;
-CREATE TABLE branch_backup
-(mod_transaction xid
-, mod_time timestamp
-, tuple_id oid
-, b_id integer     
-, b_c_id   integer
-, b_saddress varchar(200)
-, b_zipcode varchar(10)
-, b_rtotal_checking float
-, b_rts_checking timestamp
-, b_rtotal_saving float
-, b_rts_saving timestamp) without oids;
+-- drop table if exists branch_backup;
+-- CREATE TABLE branch_backup
+-- (mod_transaction xid
+-- , mod_time timestamp
+-- , tuple_id oid
+-- , b_id integer     
+-- , b_c_id   integer
+-- , b_saddress varchar(200)
+-- , b_zipcode varchar(10)
+-- , b_rtotal_checking float
+-- , b_rts_checking timestamp
+-- , b_rtotal_saving float
+-- , b_rts_saving timestamp) without oids;
 
 ---------------------------------------------------------
-drop table if exists customer_backup;
-CREATE TABLE customer_backup
-(mod_transaction xid
-, mod_time timestamp
-, tuple_id oid
-, cust_id 		bigint
-, cust_fname   	varchar(50)
-, cust_lname   	varchar(50)
-, cust_dob date
-, cust_saddress   varchar(200)
-, cust_zipcode varchar(10)
-, cust_curr_tx_count integer
-, cust_total_tx_count bigint
-, cust_rts_total_tx_count timestamp) without oids;
-
----------------------------------------------------------
-drop table if exists account_backup;
-CREATE TABLE account_backup
-(mod_transaction xid
-, mod_time timestamp
-, tuple_id oid
-, a_id bigint
-, a_cust_id bigint
-, a_b_id integer) without oids;
+-- drop table if exists customer_backup;
+-- CREATE TABLE customer_backup
+-- (mod_transaction xid
+-- , mod_time timestamp
+-- , tuple_id oid
+-- , cust_id 		bigint
+-- , cust_fname   	varchar(50)
+-- , cust_lname   	varchar(50)
+-- , cust_dob date
+-- , cust_saddress   varchar(200)
+-- , cust_zipcode varchar(10)
+-- , cust_curr_tx_count integer
+-- , cust_total_tx_count bigint
+-- , cust_rts_total_tx_count timestamp) without oids;
+-- 
+-- ---------------------------------------------------------
+-- drop table if exists account_backup;
+-- CREATE TABLE account_backup
+-- (mod_transaction xid
+-- , mod_time timestamp
+-- , tuple_id oid
+-- , a_id bigint
+-- , a_cust_id bigint
+-- , a_b_id integer) without oids;
 
 
 ---------------------------------------------------------
@@ -72,13 +72,13 @@ CREATE TABLE checking_backup
 , chk_balance 	FLOAT) without oids;
 
 ---------------------------------------------------------
-drop table if exists saving_backup;
-CREATE TABLE saving_backup
-(mod_transaction xid
-, mod_time timestamp
-, tuple_id oid
-, sav_a_id 	    bigint
-, sav_balance 	FLOAT) without oids;
+-- drop table if exists saving_backup;
+-- CREATE TABLE saving_backup
+-- (mod_transaction xid
+-- , mod_time timestamp
+-- , tuple_id oid
+-- , sav_a_id 	    bigint
+-- , sav_balance 	FLOAT) without oids;
 
 ---------------------------------------------------------
 drop table if exists dependency_table;

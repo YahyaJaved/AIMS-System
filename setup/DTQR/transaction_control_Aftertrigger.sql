@@ -70,25 +70,25 @@ $transaction_control_Aftertrigger$ LANGUAGE plpgsql;
 --AFTER UPDATE ON Randomdata
 --  FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Aftertrigger();
 
-DROP TRIGGER IF EXISTS transaction_control_Aftertrigger_country on COUNTRY;
+-- DROP TRIGGER IF EXISTS transaction_control_Aftertrigger_country on COUNTRY;
+-- 
+-- CREATE TRIGGER transaction_control_Aftertrigger_country
+-- AFTER UPDATE ON COUNTRY
+--   FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Aftertrigger();
+-- 
+-- DROP TRIGGER IF EXISTS transaction_control_Aftertrigger_branch on BRANCH;
+-- CREATE TRIGGER transaction_control_Aftertrigger_branch
+-- AFTER UPDATE ON BRANCH
+--   FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Aftertrigger();
+-- DROP TRIGGER IF EXISTS transaction_control_Aftertrigger_customer on CUSTOMER;
+-- CREATE TRIGGER transaction_control_Aftertrigger_customer
+-- AFTER UPDATE ON CUSTOMER
+--   FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Aftertrigger();
 
-CREATE TRIGGER transaction_control_Aftertrigger_country
-AFTER UPDATE ON COUNTRY
-  FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Aftertrigger();
-
-DROP TRIGGER IF EXISTS transaction_control_Aftertrigger_branch on BRANCH;
-CREATE TRIGGER transaction_control_Aftertrigger_branch
-AFTER UPDATE ON BRANCH
-  FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Aftertrigger();
-DROP TRIGGER IF EXISTS transaction_control_Aftertrigger_customer on CUSTOMER;
-CREATE TRIGGER transaction_control_Aftertrigger_customer
-AFTER UPDATE ON CUSTOMER
-  FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Aftertrigger();
-
-DROP TRIGGER IF EXISTS transaction_control_Aftertrigger_account on ACCOUNT;
-CREATE TRIGGER transaction_control_Aftertrigger_account
-AFTER UPDATE ON ACCOUNT
-  FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Aftertrigger();
+-- DROP TRIGGER IF EXISTS transaction_control_Aftertrigger_account on ACCOUNT;
+-- CREATE TRIGGER transaction_control_Aftertrigger_account
+-- AFTER UPDATE ON ACCOUNT
+--   FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Aftertrigger();
 
 DROP TRIGGER IF EXISTS transaction_control_Aftertrigger_checking on CHECKING;
 
@@ -97,8 +97,8 @@ AFTER UPDATE ON CHECKING
   FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Aftertrigger();
 
 
-DROP TRIGGER IF EXISTS transaction_control_Aftertrigger_saving on SAVING;
-
-CREATE TRIGGER transaction_control_Aftertrigger_saving
-AFTER UPDATE ON SAVING
-  FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Aftertrigger();
+-- DROP TRIGGER IF EXISTS transaction_control_Aftertrigger_saving on SAVING;
+-- 
+-- CREATE TRIGGER transaction_control_Aftertrigger_saving
+-- AFTER UPDATE ON SAVING
+--   FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Aftertrigger();
