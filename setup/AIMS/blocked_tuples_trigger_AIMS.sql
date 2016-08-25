@@ -32,7 +32,7 @@ malicious_transaction_id := new.transaction_id;
 
 select l1.time_stamp into transaction_commit_time
 from log_table l1
-where l1.transaction_id = malicious_transaction_id and l1.time_stamp = (select max(l2.time_stamp)
+where l1.transaction_id = malicious_transaction_id and l1.time_stamp = (select min(l2.time_stamp)
 									from log_table l2
 									where l2.transaction_id = malicious_transaction_id and l2.operation <> 1);
 	
