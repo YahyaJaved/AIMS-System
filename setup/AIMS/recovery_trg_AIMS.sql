@@ -57,139 +57,139 @@ END IF;
 
 ----------------------------------------------------------------------------------------------------
 
-IF tbl_var = 'country' THEN 
-
---For malicious insertion
-	select c_id into dummy
-	from country_backup
-	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
-									from country_backup
-									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions));
-	IF NOT FOUND THEN
-    	--delete from country where oid = new.corrupted_tuples_oid;
-	UPDATE country 
-	SET c_id = c_id, c_name = c_name, c_dfreq = c_dfreq
-	WHERE oid = new.corrupted_tuples_oid;
-	END IF;
-
---For malicious update	
-	FOR rec IN
-	select *
-	from country_backup
-	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
-									from country_backup
-									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions))
-	LOOP
-
-	UPDATE country 
-	SET c_id = rec.c_id, c_name = rec.c_name, c_dfreq = rec.c_dfreq
-	WHERE oid = rec.tuple_id;
-
-	END LOOP;
-END IF;
-
-----------------------------------------------------------------------------------------------------
+-- IF tbl_var = 'country' THEN 
+-- 
+-- --For malicious insertion
+-- 	select c_id into dummy
+-- 	from country_backup
+-- 	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
+-- 									from country_backup
+-- 									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions));
+-- 	IF NOT FOUND THEN
+--     	--delete from country where oid = new.corrupted_tuples_oid;
+-- 	UPDATE country 
+-- 	SET c_id = c_id, c_name = c_name, c_dfreq = c_dfreq
+-- 	WHERE oid = new.corrupted_tuples_oid;
+-- 	END IF;
+-- 
+-- --For malicious update	
+-- 	FOR rec IN
+-- 	select *
+-- 	from country_backup
+-- 	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
+-- 									from country_backup
+-- 									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions))
+-- 	LOOP
+-- 
+-- 	UPDATE country 
+-- 	SET c_id = rec.c_id, c_name = rec.c_name, c_dfreq = rec.c_dfreq
+-- 	WHERE oid = rec.tuple_id;
+-- 
+-- 	END LOOP;
+-- END IF;
 
 ----------------------------------------------------------------------------------------------------
 
-IF tbl_var = 'branch' THEN 
-
---For malicious insertion
-	select b_id into dummy
-	from branch_backup
-	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
-									from branch_backup
-									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions));
-	IF NOT FOUND THEN
-    	--delete from branch where oid = new.corrupted_tuples_oid;
-	UPDATE branch 
-	SET b_id = b_id, b_c_id = b_c_id, b_saddress = b_saddress, b_zipcode = b_zipcode, b_rtotal_checking = b_rtotal_checking, b_rts_checking = b_rts_checking, b_rtotal_saving = b_rtotal_saving, b_rts_saving = b_rts_saving
-	WHERE oid = new.corrupted_tuples_oid;
-	END IF;
-
---For malicious update	
-	FOR rec IN
-	select *
-	from branch_backup
-	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
-									from branch_backup
-									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions))
-	LOOP
-
-	UPDATE branch 
-	SET b_id = rec.b_id, b_c_id = rec.b_c_id, b_saddress = rec.b_saddress, b_zipcode = rec.b_zipcode, b_rtotal_checking = rec.b_rtotal_checking, b_rts_checking = rec.b_rts_checking, b_rtotal_saving = rec.b_rtotal_saving, b_rts_saving = rec.b_rts_saving
-	WHERE oid = rec.tuple_id;
-
-	END LOOP;
-END IF;
-
-----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
-IF tbl_var = 'customer' THEN 
-
---For malicious insertion
-	select cust_id into dummy
-	from customer_backup
-	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
-									from customer_backup
-									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions));
-	IF NOT FOUND THEN
-    	--delete from customer where oid = new.corrupted_tuples_oid;
-	UPDATE customer 
-	SET cust_id = cust_id, cust_fname = cust_fname, cust_lname = cust_lname, cust_dob = cust_dob, cust_saddress = cust_saddress, cust_zipcode = cust_zipcode, cust_curr_tx_count = cust_curr_tx_count, cust_total_tx_count = cust_total_tx_count, cust_rts_total_tx_count = cust_rts_total_tx_count
-	WHERE oid = new.corrupted_tuples_oid;
-	END IF;
-
---For malicious update	
-	FOR rec IN
-	select *
-	from customer_backup
-	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
-									from customer_backup
-									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions))
-	LOOP
-
-	UPDATE customer 
-	SET cust_id = rec.cust_id, cust_fname = rec.cust_fname, cust_lname = rec.cust_lname, cust_dob = rec.cust_dob, cust_saddress = rec.cust_saddress, cust_zipcode = rec.cust_zipcode, cust_curr_tx_count = rec.cust_curr_tx_count, cust_total_tx_count = rec.cust_total_tx_count, cust_rts_total_tx_count = rec.cust_rts_total_tx_count
-	WHERE oid = rec.tuple_id;
-
-	END LOOP;
-END IF;
+-- IF tbl_var = 'branch' THEN 
+-- 
+-- --For malicious insertion
+-- 	select b_id into dummy
+-- 	from branch_backup
+-- 	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
+-- 									from branch_backup
+-- 									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions));
+-- 	IF NOT FOUND THEN
+--     	--delete from branch where oid = new.corrupted_tuples_oid;
+-- 	UPDATE branch 
+-- 	SET b_id = b_id, b_c_id = b_c_id, b_saddress = b_saddress, b_zipcode = b_zipcode, b_rtotal_checking = b_rtotal_checking, b_rts_checking = b_rts_checking, b_rtotal_saving = b_rtotal_saving, b_rts_saving = b_rts_saving
+-- 	WHERE oid = new.corrupted_tuples_oid;
+-- 	END IF;
+-- 
+-- --For malicious update	
+-- 	FOR rec IN
+-- 	select *
+-- 	from branch_backup
+-- 	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
+-- 									from branch_backup
+-- 									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions))
+-- 	LOOP
+-- 
+-- 	UPDATE branch 
+-- 	SET b_id = rec.b_id, b_c_id = rec.b_c_id, b_saddress = rec.b_saddress, b_zipcode = rec.b_zipcode, b_rtotal_checking = rec.b_rtotal_checking, b_rts_checking = rec.b_rts_checking, b_rtotal_saving = rec.b_rtotal_saving, b_rts_saving = rec.b_rts_saving
+-- 	WHERE oid = rec.tuple_id;
+-- 
+-- 	END LOOP;
+-- END IF;
 
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
-IF tbl_var = 'account' THEN 
+-- IF tbl_var = 'customer' THEN 
+-- 
+-- --For malicious insertion
+-- 	select cust_id into dummy
+-- 	from customer_backup
+-- 	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
+-- 									from customer_backup
+-- 									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions));
+-- 	IF NOT FOUND THEN
+--     	--delete from customer where oid = new.corrupted_tuples_oid;
+-- 	UPDATE customer 
+-- 	SET cust_id = cust_id, cust_fname = cust_fname, cust_lname = cust_lname, cust_dob = cust_dob, cust_saddress = cust_saddress, cust_zipcode = cust_zipcode, cust_curr_tx_count = cust_curr_tx_count, cust_total_tx_count = cust_total_tx_count, cust_rts_total_tx_count = cust_rts_total_tx_count
+-- 	WHERE oid = new.corrupted_tuples_oid;
+-- 	END IF;
+-- 
+-- --For malicious update	
+-- 	FOR rec IN
+-- 	select *
+-- 	from customer_backup
+-- 	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
+-- 									from customer_backup
+-- 									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions))
+-- 	LOOP
+-- 
+-- 	UPDATE customer 
+-- 	SET cust_id = rec.cust_id, cust_fname = rec.cust_fname, cust_lname = rec.cust_lname, cust_dob = rec.cust_dob, cust_saddress = rec.cust_saddress, cust_zipcode = rec.cust_zipcode, cust_curr_tx_count = rec.cust_curr_tx_count, cust_total_tx_count = rec.cust_total_tx_count, cust_rts_total_tx_count = rec.cust_rts_total_tx_count
+-- 	WHERE oid = rec.tuple_id;
+-- 
+-- 	END LOOP;
+-- END IF;
 
---For malicious insertion
-	select a_id into dummy
-	from account_backup
-	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
-									from account_backup
-									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions));
-	IF NOT FOUND THEN
-    	--delete from account where oid = new.corrupted_tuples_oid;
-	UPDATE account
-	SET a_id = a_id, a_cust_id = a_cust_id, a_b_id = a_b_id
-	WHERE oid = new.corrupted_tuples_oid;
-	END IF;
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 
---For malicious update	
-	FOR rec IN
-	select *
-	from account_backup
-	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
-									from account_backup
-									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions))
-	LOOP
-
-	UPDATE account
-	SET a_id = rec.a_id, a_cust_id = rec.a_cust_id, a_b_id = rec.a_b_id
-	WHERE oid = rec.tuple_id;
-
-	END LOOP;
-END IF;
+-- IF tbl_var = 'account' THEN 
+-- 
+-- --For malicious insertion
+-- 	select a_id into dummy
+-- 	from account_backup
+-- 	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
+-- 									from account_backup
+-- 									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions));
+-- 	IF NOT FOUND THEN
+--     	--delete from account where oid = new.corrupted_tuples_oid;
+-- 	UPDATE account
+-- 	SET a_id = a_id, a_cust_id = a_cust_id, a_b_id = a_b_id
+-- 	WHERE oid = new.corrupted_tuples_oid;
+-- 	END IF;
+-- 
+-- --For malicious update	
+-- 	FOR rec IN
+-- 	select *
+-- 	from account_backup
+-- 	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
+-- 									from account_backup
+-- 									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions))
+-- 	LOOP
+-- 
+-- 	UPDATE account
+-- 	SET a_id = rec.a_id, a_cust_id = rec.a_cust_id, a_b_id = rec.a_b_id
+-- 	WHERE oid = rec.tuple_id;
+-- 
+-- 	END LOOP;
+-- END IF;
 
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
@@ -228,36 +228,36 @@ END IF;
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 
-IF tbl_var = 'saving' THEN 
-
---For malicious insertion
-	select sav_a_id into dummy
-	from saving_backup
-	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
-									from saving_backup
-									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions));
-	IF NOT FOUND THEN
-    	--delete from saving where oid = new.corrupted_tuples_oid;
-	UPDATE saving 
-	SET sav_a_id = sav_a_id, sav_balance = sav_balance
-	WHERE oid = new.corrupted_tuples_oid;
-	END IF;
-
---For malicious update	
-	FOR rec IN
-	select *
-	from saving_backup
-	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
-									from saving_backup
-									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions))
-	LOOP
-
-	UPDATE saving 
-	SET sav_a_id = rec.sav_a_id, sav_balance = rec.sav_balance
-	WHERE oid = rec.tuple_id;
-
-	END LOOP;
-END IF;
+-- IF tbl_var = 'saving' THEN 
+-- 
+-- --For malicious insertion
+-- 	select sav_a_id into dummy
+-- 	from saving_backup
+-- 	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
+-- 									from saving_backup
+-- 									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions));
+-- 	IF NOT FOUND THEN
+--     	--delete from saving where oid = new.corrupted_tuples_oid;
+-- 	UPDATE saving 
+-- 	SET sav_a_id = sav_a_id, sav_balance = sav_balance
+-- 	WHERE oid = new.corrupted_tuples_oid;
+-- 	END IF;
+-- 
+-- --For malicious update	
+-- 	FOR rec IN
+-- 	select *
+-- 	from saving_backup
+-- 	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
+-- 									from saving_backup
+-- 									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions))
+-- 	LOOP
+-- 
+-- 	UPDATE saving 
+-- 	SET sav_a_id = rec.sav_a_id, sav_balance = rec.sav_balance
+-- 	WHERE oid = rec.tuple_id;
+-- 
+-- 	END LOOP;
+-- END IF;
 
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------

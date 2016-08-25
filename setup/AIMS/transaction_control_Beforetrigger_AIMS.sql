@@ -79,32 +79,32 @@ $transaction_control_Beforetrigger_AIMS$ LANGUAGE plpgsql;
 --BEFORE UPDATE ON Randomdata
   --FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Beforetrigger_AIMS();
 
-DROP TRIGGER IF EXISTS transaction_control_Beforetrigger_AIMS_country on COUNTRY;
-
-CREATE TRIGGER transaction_control_Beforetrigger_AIMS_country
-BEFORE UPDATE ON COUNTRY
-  FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Beforetrigger_AIMS();
-DROP TRIGGER IF EXISTS transaction_control_Beforetrigger_AIMS_branch on BRANCH;
-CREATE TRIGGER transaction_control_Beforetrigger_AIMS_branch
-BEFORE UPDATE ON BRANCH
-  FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Beforetrigger_AIMS();
-DROP TRIGGER IF EXISTS transaction_control_Beforetrigger_AIMS_customer on CUSTOMER;
-CREATE TRIGGER transaction_control_Beforetrigger_AIMS_customer
-BEFORE UPDATE ON CUSTOMER
-  FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Beforetrigger_AIMS();
-
-DROP TRIGGER IF EXISTS transaction_control_Beforetrigger_AIMS_account on ACCOUNT;
-
-CREATE TRIGGER transaction_control_Beforetrigger_AIMS_account
-BEFORE UPDATE ON ACCOUNT
-  FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Beforetrigger_AIMS();
+-- DROP TRIGGER IF EXISTS transaction_control_Beforetrigger_AIMS_country on COUNTRY;
+-- 
+-- CREATE TRIGGER transaction_control_Beforetrigger_AIMS_country
+-- BEFORE UPDATE ON COUNTRY
+--   FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Beforetrigger_AIMS();
+-- DROP TRIGGER IF EXISTS transaction_control_Beforetrigger_AIMS_branch on BRANCH;
+-- CREATE TRIGGER transaction_control_Beforetrigger_AIMS_branch
+-- BEFORE UPDATE ON BRANCH
+--   FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Beforetrigger_AIMS();
+-- DROP TRIGGER IF EXISTS transaction_control_Beforetrigger_AIMS_customer on CUSTOMER;
+-- CREATE TRIGGER transaction_control_Beforetrigger_AIMS_customer
+-- BEFORE UPDATE ON CUSTOMER
+--   FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Beforetrigger_AIMS();
+-- 
+-- DROP TRIGGER IF EXISTS transaction_control_Beforetrigger_AIMS_account on ACCOUNT;
+-- 
+-- CREATE TRIGGER transaction_control_Beforetrigger_AIMS_account
+-- BEFORE UPDATE ON ACCOUNT
+--   FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Beforetrigger_AIMS();
 
 DROP TRIGGER IF EXISTS transaction_control_Beforetrigger_AIMS_checking on CHECKING;
 CREATE TRIGGER transaction_control_Beforetrigger_AIMS_checking
 BEFORE UPDATE ON CHECKING
   FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Beforetrigger_AIMS();
 
-DROP TRIGGER IF EXISTS transaction_control_Beforetrigger_AIMS_saving on SAVING;
-CREATE TRIGGER transaction_control_Beforetrigger_AIMS_saving
-BEFORE UPDATE ON SAVING
-  FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Beforetrigger_AIMS();
+-- DROP TRIGGER IF EXISTS transaction_control_Beforetrigger_AIMS_saving on SAVING;
+-- CREATE TRIGGER transaction_control_Beforetrigger_AIMS_saving
+-- BEFORE UPDATE ON SAVING
+--   FOR EACH STATEMENT EXECUTE PROCEDURE transaction_control_Beforetrigger_AIMS();
