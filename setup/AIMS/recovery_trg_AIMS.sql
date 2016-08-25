@@ -197,7 +197,7 @@ END IF;
 IF tbl_var = 'checking' THEN 
 
 --For malicious insertion
-	select chk_a_id into dummy
+	select chk_id into dummy
 	from checking_backup
 	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
 									from checking_backup
@@ -205,7 +205,7 @@ IF tbl_var = 'checking' THEN
 	IF NOT FOUND THEN
     	--delete from checking where oid = new.corrupted_tuples_oid;
 	UPDATE checking 
-	SET chk_a_id = chk_a_id, chk_balance = chk_balance
+	SET chk_id = chk_id, balance = balance
 	WHERE oid = new.corrupted_tuples_oid;
 	END IF;
 
@@ -219,7 +219,7 @@ IF tbl_var = 'checking' THEN
 	LOOP
 
 	UPDATE checking 
-	SET chk_a_id = rec.chk_a_id, chk_balance = rec.chk_balance
+	SET chk_id = rec.chk_id, balance = rec.balance
 	WHERE oid = rec.tuple_id;
 
 	END LOOP;

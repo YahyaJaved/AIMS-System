@@ -244,7 +244,7 @@ select txid_current() into t_current;
 
 /* Backup Table Population */
 
-insert into checking_backup values (t_current, ts_current, new.oid, new.chk_a_id, new.chk_balance);
+insert into checking_backup values (t_current, ts_current, new.oid, new.chk_id, new.balance);
 
 /* Dependency Generation */	
 FOR rec IN
