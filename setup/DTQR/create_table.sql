@@ -68,8 +68,8 @@ CREATE TABLE checking_backup
 (mod_transaction xid
 , mod_time timestamp
 , tuple_id oid
-, chk_a_id 	    bigint
-, chk_balance 	FLOAT) without oids;
+, chk_id 	    bigint
+, balance 	FLOAT) without oids;
 
 ---------------------------------------------------------
 -- drop table if exists saving_backup;
