@@ -1,7 +1,3 @@
-
-
-
-
 /*
 
 BACKUP AND DEPENDENCY TRIGGER
@@ -246,7 +242,7 @@ select txid_current() into t_current;
 
 insert into checking_backup values (t_current, ts_current, new.oid, new.chk_id, new.balance);
 
-/* Dependency Generation */	
+/* Dependency Generation	
 FOR rec IN
 SELECT * 
 FROM log_table 
@@ -261,6 +257,7 @@ Where operation = 1 and transaction_id = t_current
 	END IF;	
 
 	END LOOP;
+*/
 
 Return Null;
 END;

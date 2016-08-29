@@ -19,7 +19,8 @@ ts_current timestamp := NULL;
 wait float := 0;
 number_blocked_tuples int := 0;
 tuples_unrecovered int := 0;
-recover_time float := NULL; 
+recover_time float := NULL;
+transaction_commit_time timestamp; 
 
 avail_time float := NULL;
 total_touched_tuples int := 0;
@@ -64,11 +65,17 @@ where state = 'active'
 
 select txid_current() into t_current;
 
+select l1.time_stamp into transaction_commit_time
+from log_table l1
+where l1.transaction_id = malicious_transaction_id and l1.time_stamp = (select max(l2.time_stamp)
+																								from log_table l2
+																								where l2.transaction_id = malicious_transaction_id and l2.operation <> 1);
+
 insert into corrupted_transactions_table values (new.transaction_id, new.detection_time_stamp);
 	
 FOR rec IN
 SELECT DISTINCT transaction_id 
-FROM dependency_table 
+FROM log_table 
 Where depends_on_transaction = new.transaction_id
 	LOOP
 

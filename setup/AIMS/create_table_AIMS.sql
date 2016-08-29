@@ -1,5 +1,5 @@
 create table log_table
-( time_stamp timestamp, transaction_id xid,
+( time_stamp timestamp, transaction_id xid, depends_on_transaction xid,
 object_id oid, operation int, tableid oid) without oids;
 
 /* To get oid of the log table for new installation */

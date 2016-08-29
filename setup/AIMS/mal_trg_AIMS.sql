@@ -73,7 +73,7 @@ insert into corrupted_transactions_table_AIMS values (t_current, new.transaction
 	
 FOR rec IN
 SELECT DISTINCT transaction_id 
-FROM dependency_table 
+FROM log_table 
 Where depends_on_transaction = new.transaction_id
 	LOOP
 
