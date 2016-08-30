@@ -65,18 +65,12 @@ where state = 'active'
 
 select txid_current() into t_current;
 
-select l1.time_stamp into transaction_commit_time
-from log_table l1
-where l1.transaction_id = malicious_transaction_id and l1.time_stamp = (select max(l2.time_stamp)
-																								from log_table l2
-																								where l2.transaction_id = malicious_transaction_id and l2.operation <> 1);
-
 insert into corrupted_transactions_table values (new.transaction_id, new.detection_time_stamp);
 	
 FOR rec IN
 SELECT DISTINCT transaction_id 
 FROM log_table 
-Where depends_on_transaction = new.transaction_id
+Where depends_on_transaction = new.transaction_id and time_stamp < new.detection_time_stamp
 	LOOP
 
 	insert into corrupted_transactions_table values (rec.transaction_id, ts_current);

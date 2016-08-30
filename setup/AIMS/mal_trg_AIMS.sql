@@ -74,7 +74,7 @@ insert into corrupted_transactions_table_AIMS values (t_current, new.transaction
 FOR rec IN
 SELECT DISTINCT transaction_id 
 FROM log_table 
-Where depends_on_transaction = new.transaction_id
+Where depends_on_transaction = new.transaction_id and time_stamp < new.detection_time_stamp
 	LOOP
 
 	insert into corrupted_transactions_table_AIMS values (t_current, rec.transaction_id, ts_current);
