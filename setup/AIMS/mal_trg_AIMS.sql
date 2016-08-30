@@ -20,6 +20,7 @@ wait float := 0;
 number_blocked_tuples int := 0;
 tuples_unrecovered int := 0;
 recover_time float := NULL; 
+detection_time timestamp;
 
 avail_time float := NULL;
 total_touched_tuples int := 0;
@@ -69,12 +70,14 @@ where state = 'active'
 
 select txid_current() into t_current;
 
+detection_time := new.detection_time_stamp + interval '4 hours';
+
 insert into corrupted_transactions_table_AIMS values (t_current, new.transaction_id, new.detection_time_stamp);
 	
 FOR rec IN
 SELECT DISTINCT transaction_id 
 FROM log_table 
-Where depends_on_transaction = new.transaction_id and time_stamp < new.detection_time_stamp
+Where depends_on_transaction = new.transaction_id and time_stamp < detection_time
 	LOOP
 
 	insert into corrupted_transactions_table_AIMS values (t_current, rec.transaction_id, ts_current);
