@@ -176,9 +176,5 @@ create table benign_transaction_table
 
 
 
-
-
-
-
-
-
+drop table if exists deleted_time_info;
+create table deleted_time_info (start_time timestamp, end_time timestamp) without oids;
