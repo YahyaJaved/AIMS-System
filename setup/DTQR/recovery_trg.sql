@@ -196,31 +196,26 @@ END IF;
 
 IF tbl_var = 'checking' THEN 
 
---For malicious insertion
-	select chk_id into dummy
-	from checking_backup
-	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
-									from checking_backup
-									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions));
-	IF NOT FOUND THEN
-    	--delete from checking where oid = new.corrupted_tuples_oid;
-	UPDATE checking 
-	SET chk_id = chk_id, balance = balance
-	WHERE oid = new.corrupted_tuples_oid;
-	END IF;
-
 --For malicious update	
 	FOR rec IN
 	select *
-	from checking_backup
-	where tuple_id = new.corrupted_tuples_oid and mod_time = (select max(mod_time)
-									from checking_backup
-									where tuple_id = new.corrupted_tuples_oid and not (mod_transaction = new.corrupted_transactions))
+	from log_table
+	where object_id = new.corrupted_tuples_oid and operation <> 1  and not (transaction_id = new.corrupted_transactions)
+	Order by time_stamp DESC
+	LIMIT 1 
 	LOOP
 
-	UPDATE checking 
-	SET chk_id = rec.chk_id, balance = rec.balance
-	WHERE oid = rec.tuple_id;
+	If rec.operation = 2 then
+		-- Insert only. Delete the row. Currently I am doing nothing as it can disturb the experimentation
+		UPDATE checking 
+		SET chk_id = chk_id, balance = balance
+		WHERE oid = rec.object_id;			
+
+	Elsif rec.operation = 3 then 
+		UPDATE checking 
+		SET chk_id = rec.chk_id, balance = rec.balance
+		WHERE oid = rec.object_id;
+	End If;
 
 	END LOOP;
 END IF;
