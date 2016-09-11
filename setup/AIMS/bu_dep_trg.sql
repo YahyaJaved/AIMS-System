@@ -234,8 +234,8 @@ AS $dependency_trigger_checking$
 Declare
 
 rec record;
-t_current xid;
-t_xmin xid := 0;
+t_current bigint;
+t_xmin bigint := 0;
 ts_current timestamp := current_timestamp;
 	
 Begin

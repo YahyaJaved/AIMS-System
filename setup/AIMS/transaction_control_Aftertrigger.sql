@@ -14,9 +14,9 @@ CREATE OR REPLACE FUNCTION transaction_control_Aftertrigger() RETURNS TRIGGER
 AS $transaction_control_Aftertrigger$
 Declare
 
-flagxid xid := NULL;
+flagxid bigint := NULL;
 rec record;
-t_current xid;
+t_current bigint;
 ts_current timestamp := current_timestamp;
 	
 Begin
@@ -39,7 +39,9 @@ ELSE
 		raise notice 'Active transaction: % has been marked as suspicious', t_current;
 
 /* Advisory Lock */
-		perform pg_advisory_xact_lock(1);
+		--perform pg_advisory_xact_lock(1);
+
+Rollback;
 
 		raise notice '--AIMS Response System Message--';
 		raise notice 'transaction: % has been identified as benign', t_current;

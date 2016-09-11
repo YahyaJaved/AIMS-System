@@ -13,8 +13,8 @@ AS $mal_trg_AIMS$
 Declare
 
 rec record;
-t_current xid;
-t_xmin xid := 0;
+t_current bigint;
+t_xmin bigint := 0;
 ts_current timestamp := NULL;
 wait float := 0;
 number_blocked_tuples int := 0;
@@ -73,6 +73,9 @@ select txid_current() into t_current;
 detection_time := new.detection_time_stamp + interval '4 hours';
 
 insert into corrupted_transactions_table_AIMS values (t_current, new.transaction_id, new.detection_time_stamp);
+
+/* For race condition between response and recovery system, this is a check to prevent the possibility */
+perform pg_advisory_xact_lock(new.transaction_id);
 	
 FOR rec IN
 SELECT DISTINCT transaction_id 

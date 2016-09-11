@@ -13,8 +13,9 @@ AS $mal_trg$
 Declare
 
 rec record;
-t_current xid;
-t_xmin xid := 0;
+rec1 record;
+t_current bigint;
+t_xmin bigint := 0;
 ts_current timestamp := NULL;
 wait float := 0;
 number_blocked_tuples int := 0;
@@ -68,14 +69,26 @@ select txid_current() into t_current;
 detection_time := new.detection_time_stamp + interval '4 hours';
 
 insert into corrupted_transactions_table values (new.transaction_id, new.detection_time_stamp);
+
+/* For race condition between response and recovery system, this is a check to prevent the possibility */
+perform pg_advisory_xact_lock(new.transaction_id);
+--------------------------------------------------
 	
 FOR rec IN
 SELECT DISTINCT transaction_id 
 FROM log_table 
-Where depends_on_transaction = new.transaction_id and time_stamp < detection_time
+Where depends_on_transaction = new.transaction_id and transaction_id <> new.transaction_id and time_stamp < detection_time
 	LOOP
 
 	insert into corrupted_transactions_table values (rec.transaction_id, ts_current);
+	
+	For rec1 IN
+	SELECT DISTINCT transaction_id 
+	FROM log_table 
+	Where depends_on_transaction = rec.transaction_id and transaction_id <> rec.transaction_id and time_stamp < detection_time
+		Loop
+			insert into corrupted_transactions_table values (rec1.transaction_id, ts_current);
+		END loop;
 
 	END LOOP;
 

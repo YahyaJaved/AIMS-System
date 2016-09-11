@@ -15,7 +15,7 @@ Declare
 
 flag oid := NULL;
 rec record;
-t_current xid;
+t_current bigint;
 ts_current1 timestamp;
 ts_current2 timestamp;
 	
@@ -35,7 +35,11 @@ Where l1.object_id = b1.blocked_tuples and l1.transaction_id = t_current and b1.
 LIMIT 1; 
 If NOT FOUND Then
 		raise notice 'Everything Fine';
-ELSE 
+ELSE
+
+/* Drop the lock you are holding for the tuples you are trying to update and rollback to the start */
+	rollback to savepoint start;
+ 
 /* Check transaction status suspension time */
 		ts_current1 := clock_timestamp();
 		

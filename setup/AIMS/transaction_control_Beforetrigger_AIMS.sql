@@ -15,7 +15,7 @@ Declare
 
 flag oid := NULL;
 rec record;
-t_current xid;
+t_current bigint;
 ts_current1 timestamp;
 ts_current2 timestamp;
 	
@@ -31,11 +31,17 @@ the tuple is recovered */
 
 For rec in
 SELECT DISTINCT b1.ib
-FROM log_table l1, blocked_tuples_table b1 
+FROM log_table l1, AIMS_blocked_tuples_table b1 
 Where l1.object_id = b1.blocked_tuples and l1.transaction_id = t_current and b1.recovery_timestamp IS NULL
 	Loop
+
+/* Drop the lock you are holding for the tuples you are trying to update and rollback to the start */
+	rollback to savepoint start;
+
 /* Check transaction status suspension time */
-		ts_current1 := clock_timestamp();		
+		ts_current1 := clock_timestamp();
+
+		
 /* Advisory Lock */
 		perform pg_advisory_xact_lock(rec.ib);
 

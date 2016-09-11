@@ -200,7 +200,7 @@ IF tbl_var = 'checking' THEN
 	FOR rec IN
 	select *
 	from log_table
-	where object_id = new.corrupted_tuples_oid and operation <> 1  and not (transaction_id = new.corrupted_transactions)
+	where object_id = new.corrupted_tuples_oid and operation <> 1  and transaction_id <> new.corrupted_transactions
 	Order by time_stamp DESC
 	LIMIT 1 
 	LOOP
