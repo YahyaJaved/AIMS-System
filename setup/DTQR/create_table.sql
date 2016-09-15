@@ -1,6 +1,6 @@
 create table log_table
 ( time_stamp timestamp, transaction_id bigint, depends_on_transaction bigint,
-object_id oid, operation int, tableid oid) without oids;
+object_id oid, operation int, tableid oid, chk_id bigint, balance float) without oids;
 
 /*
 create table log_table
@@ -152,7 +152,7 @@ create table temp_tuples_table_AIMS
 --------------------------------------------------------------------
 drop table if exists active_transactions_table;
 create table active_transactions_table
-(transaction_id bigint) without oids;
+(transaction_id xid) without oids;
 
 -------------- New blocked tuples table -----------------
 

@@ -52,7 +52,7 @@ From pg_stat_activity
 where state = 'active'
 	LOOP
 
-	insert into active_transactions_table values (rec.backend_xid);
+	insert into active_transactions_table values (cast(rec.backend_xid as bigint));
 
 	END LOOP;
 
