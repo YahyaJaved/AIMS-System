@@ -39,7 +39,7 @@ ELSE
 
 /* Drop the lock you are holding for the tuples you are trying to update and rollback to the start */
 	--rollback to savepoint start;
- 
+	raise exception 'Have to roll back %', t_current; 
 /* Check transaction status suspension time */
 		ts_current1 := clock_timestamp();
 		
