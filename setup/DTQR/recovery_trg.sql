@@ -204,19 +204,12 @@ IF tbl_var = 'checking' THEN
 	Order by time_stamp DESC
 	LIMIT 1 
 	LOOP
-
-	If rec.operation = 2 then
-		-- Insert only. Delete the row. Currently I am doing nothing as it can disturb the experimentation
-		UPDATE checking 
-		SET chk_id = chk_id, balance = balance
-		WHERE oid = rec.object_id;			
-
-	Elsif rec.operation = 3 then 
-		UPDATE checking 
+	
+	UPDATE checking 
 		SET chk_id = rec.chk_id, balance = rec.balance
 		WHERE oid = rec.object_id;
-	End If;
 
+	
 	END LOOP;
 END IF;
 

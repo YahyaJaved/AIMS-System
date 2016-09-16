@@ -39,7 +39,7 @@ insert into blocked_tuples_status values (tuples_unrecovered, new.detection_time
 FOR rec IN
 SELECT ib
 from blocked_ibs
-where malicious_transaction = new.transaction_id;
+where malicious_transaction = new.transaction_id
 Loop
 /* Advisory Lock for Transaction Control */
 perform pg_advisory_xact_lock(rec.ib);
@@ -69,7 +69,6 @@ where state = 'active'
 /* ACTIVATE THE RECOVERY SYSTEM */
 
 select txid_current() into t_current;
-
 detection_time := new.detection_time_stamp + interval '4 hours';
 
 insert into corrupted_transactions_table_AIMS values (t_current, new.transaction_id, new.detection_time_stamp);

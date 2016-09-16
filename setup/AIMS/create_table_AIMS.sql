@@ -1,6 +1,6 @@
-create table log_table
-( time_stamp timestamp, transaction_id bigint, depends_on_transaction bigint,
-object_id oid, operation int, tableid oid, chk_id bigint, balance float) without oids;
+--create table log_table
+--( time_stamp timestamp, transaction_id bigint, depends_on_transaction bigint,
+--object_id oid, operation int, tableid oid, chk_id bigint, balance float) without oids;
 
 /* To get oid of the log table for new installation */
 --select oid from pg_class where relname= 'log_table';
@@ -106,8 +106,8 @@ create table corrupted_transactions_table
 
 -------------------------------------------------------------
 drop table if exists repair_table;
-create table repair_table
-(corrupted_tuples_oid oid, mal_commit_time timestamp, corrupted_transactions bigint, relation_name regclass) without oids;
+--create table repair_table
+--(corrupted_tuples_oid oid, mal_commit_time timestamp, corrupted_transactions bigint, relation_name regclass) without oids;
 
 ----------------------------------------------------------------
 drop table if exists art_table;
@@ -146,7 +146,7 @@ create table temp_tuples_table_AIMS
 --------------------------------------------------------------------
 drop table if exists active_transactions_table;
 create table active_transactions_table
-(transaction_id bigint) without oids;
+(transaction_id xid) without oids;
 
 -------------- New blocked tuples table -----------------
 
@@ -177,7 +177,7 @@ create table benign_transaction_table
 -------------- Newest blocked tuples table for AIMS only, concurrent recovery version -----------------
 
 drop table if exists AIMS_blocked_tuples_table;
-create table blocked_tuples_table_AIMS
+create table AIMS_blocked_tuples_table
 (blocked_tuples oid, malicious_transaction bigint, detection_timestamp timestamp, recovery_timestamp timestamp, ib int) without oids;
 
 -----------------New corrupted transactions table, with IDS transaction--------------------------------------

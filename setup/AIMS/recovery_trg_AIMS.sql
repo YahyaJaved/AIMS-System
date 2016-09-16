@@ -265,8 +265,8 @@ Return Null;
 END;
 $recovery_trigger$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS recovery_trigger on repair_table;
+DROP TRIGGER IF EXISTS recovery_trigger on repair_table_AIMS;
 
 CREATE TRIGGER recovery_trigger
-AFTER INSERT ON repair_table
+AFTER INSERT ON repair_table_AIMS
     FOR EACH ROW EXECUTE PROCEDURE recovery_trigger();

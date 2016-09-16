@@ -52,10 +52,11 @@ From pg_stat_activity
 where state = 'active'
 	LOOP
 
-	insert into active_transactions_table values (cast(rec.backend_xid as bigint));
+	insert into active_transactions_table values (rec.backend_xid);
 
 	END LOOP;
 
+raise notice 's1';
 /* Wait for sometime proportional to the number of tuples blocked */
 
 --wait := number_blocked_tuples / 67.3;
@@ -70,6 +71,7 @@ detection_time := new.detection_time_stamp + interval '4 hours';
 
 insert into corrupted_transactions_table values (new.transaction_id, new.detection_time_stamp);
 
+raise notice 's2';
 /* For race condition between response and recovery system, this is a check to prevent the possibility */
 perform pg_advisory_xact_lock(new.transaction_id);
 --------------------------------------------------

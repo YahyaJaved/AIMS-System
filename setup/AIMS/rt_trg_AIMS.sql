@@ -23,7 +23,7 @@ Where transaction_id = new.transaction_id and operation <> 1
 	select relname into table_name 
 	from pg_class where oid = rec.tableid;
 
-	insert into repair_table values (new.IDS_transaction, rec.object_id, rec.time_stamp, rec.transaction_id, table_name);
+	insert into repair_table_AIMS values (new.IDS_transaction, rec.object_id, rec.time_stamp, rec.transaction_id, table_name);
 
 	END LOOP;
 

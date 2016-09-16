@@ -38,7 +38,7 @@ If NOT FOUND Then
 ELSE
 
 /* Drop the lock you are holding for the tuples you are trying to update and rollback to the start */
-	rollback to savepoint start;
+	--rollback to savepoint start;
  
 /* Check transaction status suspension time */
 		ts_current1 := clock_timestamp();
