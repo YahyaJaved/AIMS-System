@@ -37,8 +37,11 @@ If NOT FOUND Then
 		raise notice 'Everything Fine';
 ELSE
 
+
+	-- Release whatever lock held by this transaction manually using pg_cancel_backend()
+	
 /* Drop the lock you are holding for the tuples you are trying to update and rollback to the start */
-	--rollback to savepoint start;
+	 rollback to savepoint start;
  
 /* Check transaction status suspension time */
 		ts_current1 := clock_timestamp();
