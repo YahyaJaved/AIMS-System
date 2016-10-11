@@ -23,7 +23,8 @@ Begin
 
 transaction_detection_time := new.detection_time_stamp;
 
-transaction_detection_time := transaction_detection_time + interval '4 hours';
+-- No need to do it here as I am already adding 4 hours in the detection at mtx.sql
+--transaction_detection_time := transaction_detection_time + interval '4 hours';
 
 malicious_transaction_id := new.transaction_id;
 
@@ -35,27 +36,48 @@ is not populated yet while the dependency generation is underway simultaneously.
 perform pg_advisory_xact_lock(malicious_transaction_id);
 
 
---raise notice 'malicious detection time: %', transaction_detection_time;
 
-select l1.time_stamp into transaction_commit_time
-from log_table l1
-where l1.transaction_id = malicious_transaction_id and l1.time_stamp = (select min(l2.time_stamp)
-																								from log_table l2
-																								where l2.transaction_id = malicious_transaction_id and l2.operation <> 1);
+----------------------------------------------------------------------------------------------
+---This query did the same thing as below but not in an optimal fashion
+
+--select l1.time_stamp into transaction_commit_time
+--from log_table l1
+--where l1.transaction_id = malicious_transaction_id and l1.time_stamp = (select min(l2.time_stamp)
+--																								from log_table l2
+--																								where l2.transaction_id = malicious_transaction_id and l2.operation <> 1);
+----------------------------------------------------------------------------------------------
 
 
---raise notice 'malicious commit time: %', transaction_commit_time;
+/* Finding the commit time of the malicous transcation, here the time when the transction effectively starts is taken
+so that the write set of the malicious transaction itself can be included in the blocked tuples table */ 
+--VERIFIED
+
+select time_stamp into transaction_commit_time
+from log_table
+where transaction_id = malicious_transaction_id
+Order by time_stamp ASC
+LIMIT 1;
+
+------------------------------------------------------------------------------------------------
+
+/* Identifying the tuples modified between the commit and detection time of the malicious transaction under consideration */
+--VERIFIED
 	
 FOR rec IN
 SELECT * 
 FROM log_table 
-Where operation <> 1 and time_stamp BETWEEN transaction_commit_time and transaction_detection_time 
+Where time_stamp BETWEEN transaction_commit_time and transaction_detection_time 
 	LOOP
 
-	insert into blocked_tuples_table values (rec.object_id, malicious_transaction_id, transaction_detection_time, NULL);
+	insert into temp_log_table values (malicious_transaction_id, rec.time_stamp, rec.transaction_id, rec.depends_on_transaction, rec.object_id, rec.operation, rec.tableid, rec.chk_id, rec.balance);
 
+	IF rec.operation = 3 THEN
+	insert into blocked_tuples_table values (rec.object_id, malicious_transaction_id, transaction_detection_time, NULL);
+	END IF;
+		
 	END LOOP;
 
+----------------------------------------------------------------------------------------------------
 
 Return Null;
 END;

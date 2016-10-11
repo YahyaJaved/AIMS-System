@@ -21,7 +21,9 @@ wait float := 0;
 number_blocked_tuples int := 0;
 tuples_unrecovered int := 0;
 recover_time float := NULL;
-detection_time timestamp; 
+detection_time timestamp;
+mal_commit_time timestamp; 
+clock_timestamp timestamp;
 
 avail_time float := NULL;
 total_touched_tuples int := 0;
@@ -31,6 +33,8 @@ Begin
 raise notice 'AIMS Recovery System has Started';
 
 
+-- Logging the blocked_tuples status , it actually models the arrival and departure from blocked_tuples_table a.k.a B-vector or B-queue
+-- << VERIFIED >>
 select count(distinct blocked_tuples) into tuples_unrecovered
 from blocked_tuples_table
 where recovery_timestamp IS NULL; 
@@ -44,6 +48,8 @@ perform pg_advisory_xact_lock(1);
 /* Advisory Lock for Suspicious Transactions */
 --perform pg_advisory_xact_lock(2);
 
+/*
+-------------------------------------------------------------
 -- POPULATE THE ACTIVE TRANSACTIONS TABLE FOR SUSPICIOUS TRANSACTION MANAGEMENT
 
 FOR rec IN
@@ -55,44 +61,63 @@ where state = 'active'
 	insert into active_transactions_table values (rec.backend_xid);
 
 	END LOOP;
+*/
 
-raise notice 's1';
+--------------------------------------------------------------
 /* Wait for sometime proportional to the number of tuples blocked */
 
 --wait := number_blocked_tuples / 67.3;
 
 --perform pg_sleep(wait);
+--------------------------------------------------------------
+
+raise notice 's1';
 
 /* ACTIVATE THE RECOVERY SYSTEM */
 
 select txid_current() into t_current;
 
-detection_time := new.detection_time_stamp + interval '4 hours';
+---MADE CHANGES TO MTX.SQL, THE INSERTED TIME THERE IS ALREADY 4 HOURS AHEAD
+---detection_time := new.detection_time_stamp + interval '4 hours'; 
+--- mal_commit_time is log_table time which is 4 hours ahead of system time  
+--- << VERIFIED >>
+select time_stamp into mal_commit_time
+from log_table
+where transaction_id = new.transaction_id
+Order by time_stamp ASC
+LIMIT 1;
 
-insert into corrupted_transactions_table values (new.transaction_id, new.detection_time_stamp);
+-- << VERIFIED >>
+insert into corrupted_transactions_table values (new.transaction_id, new.detection_time_stamp, mal_commit_time, 'malicious');
 
 raise notice 's2';
 /* For race condition between response and recovery system, this is a check to prevent the possibility */
 perform pg_advisory_xact_lock(new.transaction_id);
 --------------------------------------------------
+
+-- Find the affected tranactions
+-- << VERIFIED >>
 	
 FOR rec IN
 SELECT DISTINCT transaction_id 
-FROM log_table 
-Where depends_on_transaction = new.transaction_id and transaction_id <> new.transaction_id and time_stamp < detection_time
+FROM temp_log_table 
+Where depends_on_transaction = new.transaction_id
 	LOOP
 
-	insert into corrupted_transactions_table values (rec.transaction_id, ts_current);
+	insert into corrupted_transactions_table values (rec.transaction_id, new.detection_time_stamp, mal_commit_time, 'affected');
 	
 	For rec1 IN
 	SELECT DISTINCT transaction_id 
-	FROM log_table 
-	Where depends_on_transaction = rec.transaction_id and transaction_id <> rec.transaction_id and time_stamp < detection_time
+	FROM temp_log_table 
+	Where depends_on_transaction = rec.transaction_id
 		Loop
-			insert into corrupted_transactions_table values (rec1.transaction_id, ts_current);
+			insert into corrupted_transactions_table values (rec1.transaction_id, new.detection_time_stamp, mal_commit_time, 'affected');
 		END loop;
 
 	END LOOP;
+
+-----------------------------------------------------------------------------------------------------
+-- << VERIFIED >> the whole avail metric module
 
 /*** Populate the availability metric table ***/
 
@@ -109,9 +134,9 @@ from log_table;
 
 ts_current := clock_timestamp();
 
-/* Time difference handle */
+/* Time difference handle for discrepancy between detection time and current_time  */
 
-ts_current := ts_current; 
+ts_current := ts_current + interval '4 hours'; 
 
 SELECT EXTRACT(EPOCH FROM (ts_current - new.detection_time_stamp)) into recover_time;
 
@@ -128,50 +153,51 @@ IF number_blocked_tuples = 0 then
 	avail_time := 0;
 END IF;
 
+-- Compatibility with the log_table
+clock_timestamp := clock_timestamp() + interval '4 hours';
+
 -- Insert values into avail_metric_table
-insert into avail_metric_table values (new.transaction_id, number_blocked_tuples, recover_time, avail_time,new.detection_time_stamp,clock_timestamp());
+insert into avail_metric_table values (new.transaction_id, number_blocked_tuples, recover_time, avail_time,new.detection_time_stamp,clock_timestamp);
 
+----------------------------------------------------------------------------------------------------
 
+-- I removed this statment because we didn't wanted to lose any information about the number of tuples blocked and recovered in the blocked tuples table, otherwise this delete statement was not creating any problems in the consistency and working of the recovery system
 --delete from blocked_tuples_table
 --where malicious_transaction = new.transaction_id;
+
+----------------------------------------------------------------------------------------------------
 
 /* Release the tuples that are recovered */
 /* Log the time when the tuples were released in the blocked_transctions_table */
 
+-- Update the block tuples table and freeing the recoverd tuples 
+-- << VERIFIED >>
+update blocked_tuples_table set recovery_timestamp = ts_current
+where malicious_transaction = new.transaction_id;
+
+-- logging the number of unrecovered tuples (from other malicious transactions) after the recovery system has completed recovery for this malicious transaction 
+-- << VERIFIED >>
 select count(distinct blocked_tuples) into tuples_unrecovered
 from blocked_tuples_table
 where recovery_timestamp IS NULL;
 
+-- Compatibility with the log_table
+-- << VERIFIED >>
+clock_timestamp := clock_timestamp() + interval '4 hours';
 
-insert into blocked_tuples_status values (tuples_unrecovered, ts_current,  new.transaction_id);
+insert into blocked_tuples_status values (tuples_unrecovered, clock_timestamp,  new.transaction_id);
 
-update blocked_tuples_table set recovery_timestamp = ts_current
-where malicious_transaction = new.transaction_id;
+----------------------------------------------------------------------------------------------------
 
-/****** Populate the blocked_tuples_status table *******/
+/*****************************************************/
 
---select count(distinct blocked_tuples) into tuples_unrecovered
---from blocked_tuples_table
---where recovery_timestamp = NULL; 
+/* Clean the temp_log_table */
 
+--This delete is not creating any consistency issues because its only deleting its part of table identified by the mal txn xid
+-- << VERIFIED >>
+delete from temp_log_table where reference_txn = new.transaction_id;
 
---insert into blocked_tuples_status values (tuples_unrecovered, ts_current,  new.transaction_id);
-
-/*
-select txid_current() into t_current;
-
-insert into corrupted_transactions_table values (new.transaction_id, new.detection_time_stamp);
-	
-FOR rec IN
-SELECT DISTINCT transaction_id 
-FROM dependency_table 
-Where depends_on_transaction = new.transaction_id
-	LOOP
-
-	insert into corrupted_transactions_table values (rec.transaction_id, ts_current);
-
-	END LOOP;
-*/
+/*****************************************************/
 
 
 raise notice 'AIMS Recovery System has Completed Recovery';

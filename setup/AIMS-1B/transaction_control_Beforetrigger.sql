@@ -43,13 +43,13 @@ ELSE
 /* Drop the lock you are holding for the tuples you are trying to update and rollback to the start */
 	--raise exception 'Have to roll back %', t_current; 
 /* Check transaction status suspension time */
-		ts_current1 := clock_timestamp();
+		ts_current1 := clock_timestamp() + interval  '4 hours';
 		
 /* Advisory Lock */
 		perform pg_advisory_xact_lock(1);
 
 /* Check transaction status resumption time */
-		ts_current2 := clock_timestamp();
+		ts_current2 := clock_timestamp() + interval '4 hours';
 		--insert into benign_transaction_table values (t_current, ts_current1, ts_current2);
 		select transaction_id into flag
 		from benign_transaction_table
