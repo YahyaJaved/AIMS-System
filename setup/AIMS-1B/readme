@@ -31,4 +31,13 @@
                 /usr/local/pgsql/bin/psql -d postgres -a -f /var/lib/postgresql/aims/AIMS-System/setup/clean.sql
 
 
+****************************************************************
+
+1] In order for the recovery system to work correctly the log_table and should be populated properly
+2] even the inserts of the tuples should be in the log_table should be logged, the cleaning of the log_table after every experiment run can be
+	done by " delete from log_table where operation <> 2; "
+3] The backup_trigger_checking should be installed properly, for each update it logs the new and old balance with negligible overhead << verified >>
+   
+
+
 

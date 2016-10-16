@@ -18,10 +18,18 @@ rec record;
 t_current bigint;
 ts_current1 timestamp;
 ts_current2 timestamp;
+writeset_size int := 0;
 	
 Begin
 
 select txid_current() into t_current;
+
+select count(*) into writeset_size
+from log_table
+where transaction_id = t_current and operation = 3;
+
+-- Only lock for the first update check at the start of the transaction
+IF writeset_size = 0 THEN
 
 /* Transaction Locking and Suspension */	
 
@@ -29,16 +37,14 @@ select txid_current() into t_current;
  i.e. the tuples recovery_timestap in the blocked_tuples_table is NULL then suspend the transaction until 
 the tuple is recovered */  
 
-SELECT l1.object_id into flag
-FROM log_table l1, blocked_tuples_table b1 
-Where l1.object_id = b1.blocked_tuples and l1.transaction_id = t_current and b1.recovery_timestamp IS NULL
-LIMIT 1; 
-If NOT FOUND Then
-		raise notice 'Everything Fine';
-ELSE
+	SELECT l1.object_id into flag
+	FROM log_table l1, blocked_tuples_table b1 	
+	Where l1.object_id = b1.blocked_tuples and l1.transaction_id = t_current and b1.recovery_timestamp IS NULL
+	LIMIT 1; 
+	If NOT FOUND Then
+			raise notice 'Everything Fine';
+	ELSE
 
-
-	-- Release whatever lock held by this transaction manually using pg_cancel_backend()
 	
 /* Drop the lock you are holding for the tuples you are trying to update and rollback to the start */
 	--raise exception 'Have to roll back %', t_current; 
@@ -77,8 +83,10 @@ ELSE
 
 			END LOOP;
 */
+		END IF;
+
 END IF;
---insert into benign_transaction_status values (t_current, ts_current1, ts_current2);
+
 Return Null;
 END;
 $transaction_control_Beforetrigger$ LANGUAGE plpgsql;
