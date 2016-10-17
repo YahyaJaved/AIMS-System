@@ -1,6 +1,16 @@
---create table log_table
---( time_stamp timestamp, transaction_id bigint, depends_on_transaction bigint,
---object_id oid, operation int, tableid oid, chk_id bigint, balance float) without oids;
+create table log_table
+( time_stamp timestamp, transaction_id bigint, depends_on_transaction bigint,
+object_id oid, operation int, tableid oid, chk_id bigint, balance float) without oids;
+
+create table temp_log_table
+( reference_txn bigint, time_stamp timestamp, transaction_id bigint, depends_on_transaction bigint,
+object_id oid, operation int, tableid oid, chk_id bigint, balance float) without oids;
+
+/*
+create table log_table
+( time_stamp timestamp, transaction_id bigint, depends_on_transaction bigint,
+object_id oid, operation int, tableid oid, chk_id bigint, balance float) without oids;
+*/
 
 /* To get oid of the log table for new installation */
 --select oid from pg_class where relname= 'log_table';
@@ -69,7 +79,8 @@ CREATE TABLE checking_backup
 , mod_time timestamp
 , tuple_id oid
 , chk_id 	    bigint
-, balance 	FLOAT) without oids;
+, new_balance 	FLOAT
+, old_balance FLOAT) without oids;
 
 ---------------------------------------------------------
 -- drop table if exists saving_backup;
@@ -102,12 +113,12 @@ create table malicious_transactions_table
 --------------------------------------------------------------
 drop table if exists corrupted_transactions_table;
 create table corrupted_transactions_table
-(transaction_id bigint, detection_time_stamp timestamp) without oids;
+(transaction_id bigint, detection_time_stamp timestamp, mal_commit_time timestamp, status varchar(20)) without oids;
 
 -------------------------------------------------------------
 drop table if exists repair_table;
---create table repair_table
---(corrupted_tuples_oid oid, mal_commit_time timestamp, corrupted_transactions bigint, relation_name regclass) without oids;
+create table repair_table
+(corrupted_tuples_oid oid, mal_commit_time timestamp, corrupted_transactions bigint, status varchar(20),relation_name regclass) without oids;
 
 ----------------------------------------------------------------
 drop table if exists art_table;

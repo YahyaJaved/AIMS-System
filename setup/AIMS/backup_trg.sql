@@ -1,16 +1,10 @@
-
-
-
-
 /*
 
-BACKUP AND DEPENDENCY TRIGGER
+BACKUP TRIGGER
 
 This trigger gets fired for each transaction so it should be defined
 for every table. This trigger performs two tasks: 
 (i) It popuates the versions table (backup table) for recovery.
-(ii) It generates the transaction dependency graph and data and data dependency graph
-     by populating the dependency_table.
 */
 
 /*
@@ -229,47 +223,31 @@ AFTER INSERT OR UPDATE ON randomdata
 
 --------------------------------------------------------------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION dependency_trigger_checking() RETURNS TRIGGER
-AS $dependency_trigger_checking$
+CREATE OR REPLACE FUNCTION backup_trigger_checking() RETURNS TRIGGER
+AS $backup_trigger_checking$
 Declare
 
 rec record;
-t_current bigint;
+t_current bigint := txid_current();
 t_xmin bigint := 0;
 ts_current timestamp := current_timestamp;
 	
 Begin
 
-select txid_current() into t_current;
-
 /* Backup Table Population */
 
-insert into checking_backup values (t_current, ts_current, new.oid, new.chk_id, new.balance);
+ts_current := ts_current + interval '4 hours';
 
-/* Dependency Generation
-FOR rec IN
-SELECT * 
-FROM log_table 
-Where operation = 1 and transaction_id = t_current
-	LOOP
+insert into checking_backup values (t_current, ts_current, new.oid, new.chk_id, new.balance, old.balance);
 
-	select xmin into t_xmin 
-	from CHECKING
-	where oid = rec.object_id;
-	IF t_xmin IS NOT NULL then
-		insert into dependency_table values (t_current, t_xmin,rec.object_id, new.oid, ts_current);
-	END IF;	
-
-	END LOOP;
-*/
 
 Return Null;
 END;
-$dependency_trigger_checking$ LANGUAGE plpgsql;
-DROP TRIGGER IF EXISTS dependency_trigger_checking on checking;
-CREATE TRIGGER dependency_trigger_checking
-AFTER INSERT OR UPDATE ON CHECKING
-    FOR EACH ROW EXECUTE PROCEDURE dependency_trigger_checking();
+$backup_trigger_checking$ LANGUAGE plpgsql;
+DROP TRIGGER IF EXISTS backup_trigger_checking on checking;
+CREATE TRIGGER backup_trigger_checking
+AFTER UPDATE ON CHECKING
+    FOR EACH ROW EXECUTE PROCEDURE backup_trigger_checking();
 
 --------------------------------------------------------------------------------------------------------------------------
 
@@ -313,5 +291,5 @@ AFTER INSERT OR UPDATE ON CHECKING
 -- CREATE TRIGGER dependency_trigger_saving
 -- AFTER INSERT OR UPDATE ON SAVING
 --     FOR EACH ROW EXECUTE PROCEDURE dependency_trigger_saving();
--- 
--- 
+
+

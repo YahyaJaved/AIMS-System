@@ -18,10 +18,18 @@ rec record;
 t_current bigint;
 ts_current1 timestamp;
 ts_current2 timestamp;
+writeset_size int := 0;
 	
 Begin
 
 select txid_current() into t_current;
+
+select count(*) into writeset_size
+from log_table
+where transaction_id = t_current and operation = 3;
+
+-- Only lock for the first update check at the start of the transaction
+IF writeset_size = 0 THEN
 
 /* Transaction Locking and Suspension */	
 
@@ -29,54 +37,41 @@ select txid_current() into t_current;
  i.e. the tuples recovery_timestap in the blocked_tuples_table is NULL then suspend the transaction until 
 the tuple is recovered */  
 
-For rec in
-SELECT DISTINCT b1.ib
-FROM log_table l1, AIMS_blocked_tuples_table b1 
-Where l1.object_id = b1.blocked_tuples and l1.transaction_id = t_current and b1.recovery_timestamp IS NULL
-	Loop
+	For rec in
+	SELECT DISTINCT b1.ib
+	FROM log_table l1, AIMS_blocked_tuples_table b1 
+	Where l1.object_id = b1.blocked_tuples and l1.transaction_id = t_current and b1.recovery_timestamp IS NULL
+		Loop
 
 /* Drop the lock you are holding for the tuples you are trying to update and rollback to the start */
 --	rollback to savepoint start;
 
 /* Check transaction status suspension time */
-		ts_current1 := clock_timestamp();
+			ts_current1 := clock_timestamp();
 
 		
 /* Advisory Lock */
-		perform pg_advisory_xact_lock(rec.ib);
+			perform pg_advisory_xact_lock(rec.ib);
 
 /* Check transaction status resumption time */
-		ts_current2 := clock_timestamp();
-		--insert into benign_transaction_table values (t_current, ts_current1, ts_current2);
-		select transaction_id into flag
-		from benign_transaction_table
-		where transaction_id = t_current
-		limit 1;
-		if not found then
+			ts_current2 := clock_timestamp();
+			--insert into benign_transaction_table values (t_current, ts_current1, ts_current2);
+			select transaction_id into flag
+			from benign_transaction_table
+			where transaction_id = t_current
+			limit 1;
+			if not found then
 			insert into benign_transaction_table values (t_current, ts_current1, ts_current2);
-		else 
-			update benign_transaction_table set resumption_time = ts_current2
-			where transaction_id = t_current;
-		
-		end if;	
+			else 
+				update benign_transaction_table set resumption_time = ts_current2
+				where transaction_id = t_current;
+			
+			end if;	
 	
-	END Loop;
+		END Loop;
 
-/* Read Select Tuples for this transaction here again as this transaction has read the corrupted tuples
+END IF;
 
-		FOR rec IN
-		SELECT l1.object_id
-		FROM log_table l1, blocked_tuples_table b1 
-		Where l1.transaction_id = t_current and l1.operation = 1 and l1.object_id = b1.blocked_tuples
-			LOOP
-
-			perform * 
-			from Randomdata
-			where oid = rec.object_id;
-
-			END LOOP;
-*/
---insert into benign_transaction_status values (t_current, ts_current1, ts_current2);
 Return Null;
 END;
 $transaction_control_Beforetrigger_AIMS$ LANGUAGE plpgsql;

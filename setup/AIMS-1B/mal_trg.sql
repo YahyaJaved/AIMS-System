@@ -32,6 +32,10 @@ Begin
 
 raise notice 'AIMS Recovery System has Started';
 
+/* For race condition between response and recovery system, this is a check to prevent the possibility */
+-- To make sure response system aquires this lock first
+perform pg_sleep(0.1);
+perform pg_advisory_xact_lock(new.transaction_id);
 
 -- Logging the blocked_tuples status , it actually models the arrival and departure from blocked_tuples_table a.k.a B-vector or B-queue
 -- << VERIFIED >>
@@ -91,8 +95,6 @@ LIMIT 1;
 insert into corrupted_transactions_table values (new.transaction_id, new.detection_time_stamp, mal_commit_time, 'malicious');
 
 raise notice 's2';
-/* For race condition between response and recovery system, this is a check to prevent the possibility */
-perform pg_advisory_xact_lock(new.transaction_id);
 --------------------------------------------------
 
 -- Find the affected tranactions

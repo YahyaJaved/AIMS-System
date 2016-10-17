@@ -69,21 +69,7 @@ the tuple is recovered */
 		
 		end if;	
 
-/* Read Select Tuples for this transaction here again as this transaction has read the corrupted tuples
-
-		FOR rec IN
-		SELECT l1.object_id
-		FROM log_table l1, blocked_tuples_table b1 
-		Where l1.transaction_id = t_current and l1.operation = 1 and l1.object_id = b1.blocked_tuples
-			LOOP
-
-			perform * 
-			from Randomdata
-			where oid = rec.object_id;
-
-			END LOOP;
-*/
-		END IF;
+	END IF;
 
 END IF;
 
