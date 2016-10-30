@@ -125,7 +125,7 @@ Where depends_on_transaction = new.transaction_id
 
 /* Count blocked number of tuples */
 
-select count(*) into number_blocked_tuples
+select count(DISTINCT blocked_tuples) into number_blocked_tuples
 from blocked_tuples_table
 where malicious_transaction = new.transaction_id;
 
@@ -159,7 +159,7 @@ END IF;
 clock_timestamp := clock_timestamp() + interval '4 hours';
 
 -- Insert values into avail_metric_table
-insert into avail_metric_table values (new.transaction_id, number_blocked_tuples, recover_time, avail_time,new.detection_time_stamp,clock_timestamp);
+insert into avail_metric_table values (new.transaction_id, number_blocked_tuples, recover_time, avail_time,new.detection_time_stamp, clock_timestamp);
 
 ----------------------------------------------------------------------------------------------------
 

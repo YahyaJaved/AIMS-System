@@ -98,7 +98,7 @@ Where depends_on_transaction = new.transaction_id and transaction_id <> new.tran
 
 /* Count blocked number of tuples */
 
-select count(*) into number_blocked_tuples
+select count(DISTINCT blocked_tuples) into number_blocked_tuples
 from blocked_tuples_table
 where malicious_transaction = new.transaction_id;
 
