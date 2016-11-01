@@ -40,7 +40,7 @@ perform pg_advisory_xact_lock(new.transaction_id);
 -- Logging the blocked_tuples status , it actually models the arrival and departure from blocked_tuples_table a.k.a B-vector or B-queue
 -- << VERIFIED >>
 select count(distinct blocked_tuples) into tuples_unrecovered
-from blocked_tuples_table
+from AIMS_blocked_tuples_table
 where recovery_timestamp IS NULL; 
 
 insert into blocked_tuples_status values (tuples_unrecovered, new.detection_time_stamp,  new.transaction_id);
@@ -187,7 +187,7 @@ where malicious_transaction = new.transaction_id;
 -- logging the number of unrecovered tuples (from other malicious transactions) after the recovery system has completed recovery for this malicious transaction 
 -- << VERIFIED >>
 select count(distinct blocked_tuples) into tuples_unrecovered
-from blocked_tuples_table
+from AIMS_blocked_tuples_table
 where recovery_timestamp IS NULL;
 
 -- Compatibility with the log_table
