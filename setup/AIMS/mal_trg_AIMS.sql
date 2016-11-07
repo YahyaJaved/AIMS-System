@@ -48,7 +48,7 @@ rec_start := clock_timestamp();
 
 /* Time difference handle for discrepancy between detection time and current_time  */
 
-rec_start := rec_finish + interval '4 hours';
+rec_start := rec_start + interval '4 hours';
 
 insert into blocked_tuples_status values (tuples_unrecovered, rec_start,  new.transaction_id);
 
