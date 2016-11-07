@@ -16,7 +16,7 @@ rec record;
 rec1 record;
 t_current bigint;
 t_xmin bigint := 0;
-ts_current timestamp := NULL;
+rec_finish timestamp := NULL;
 wait float := 0;
 number_blocked_tuples int := 0;
 tuples_unrecovered int := 0;
@@ -24,6 +24,7 @@ recover_time float := NULL;
 detection_time timestamp;
 mal_commit_time timestamp; 
 clock_timestamp timestamp;
+rec_start timestamp := NULL;
 
 avail_time float := NULL;
 total_touched_tuples int := 0;
@@ -43,7 +44,13 @@ select count(distinct blocked_tuples) into tuples_unrecovered
 from AIMS_blocked_tuples_table
 where recovery_timestamp IS NULL; 
 
-insert into blocked_tuples_status values (tuples_unrecovered, new.detection_time_stamp,  new.transaction_id);
+rec_start := clock_timestamp();
+
+/* Time difference handle for discrepancy between detection time and current_time  */
+
+rec_start := rec_finish + interval '4 hours';
+
+insert into blocked_tuples_status values (tuples_unrecovered, rec_start,  new.transaction_id);
 
 
 /* Advisory Lock for Transaction Control, lock for each blocked ib */
@@ -141,13 +148,13 @@ where malicious_transaction = new.transaction_id;
 select count(DISTINCT object_id) into total_touched_tuples
 from log_table;
 
-ts_current := clock_timestamp();
+rec_finish := clock_timestamp();
 
 /* Time difference handle for discrepancy between detection time and current_time  */
 
-ts_current := ts_current + interval '4 hours'; 
+rec_finish := rec_finish + interval '4 hours'; 
 
-SELECT EXTRACT(EPOCH FROM (ts_current - new.detection_time_stamp)) into recover_time;
+SELECT EXTRACT(EPOCH FROM (rec_finish - rec_start)) into recover_time;
 
 -- calculate the avail time 
 
@@ -162,11 +169,9 @@ IF number_blocked_tuples = 0 then
 	avail_time := 0;
 END IF;
 
--- Compatibility with the log_table
-clock_timestamp := clock_timestamp() + interval '4 hours';
 
 -- Insert values into avail_metric_table
-insert into avail_metric_table values (new.transaction_id, number_blocked_tuples, recover_time, avail_time,new.detection_time_stamp,clock_timestamp);
+insert into avail_metric_table values (new.transaction_id, number_blocked_tuples, recover_time, avail_time, rec_start, rec_finish);
 
 ----------------------------------------------------------------------------------------------------
 
@@ -181,7 +186,7 @@ insert into avail_metric_table values (new.transaction_id, number_blocked_tuples
 
 -- Update the block tuples table and freeing the recoverd tuples 
 -- << VERIFIED >>
-update blocked_tuples_table set recovery_timestamp = ts_current
+update blocked_tuples_table set recovery_timestamp = rec_finish
 where malicious_transaction = new.transaction_id;
 
 -- logging the number of unrecovered tuples (from other malicious transactions) after the recovery system has completed recovery for this malicious transaction 
@@ -190,11 +195,13 @@ select count(distinct blocked_tuples) into tuples_unrecovered
 from AIMS_blocked_tuples_table
 where recovery_timestamp IS NULL;
 
+/* 07-11-16
 -- Compatibility with the log_table
 -- << VERIFIED >>
 clock_timestamp := clock_timestamp() + interval '4 hours';
+*/
 
-insert into blocked_tuples_status values (tuples_unrecovered, clock_timestamp,  new.transaction_id);
+insert into blocked_tuples_status values (tuples_unrecovered, rec_finish,  new.transaction_id);
 
 ----------------------------------------------------------------------------------------------------
 
